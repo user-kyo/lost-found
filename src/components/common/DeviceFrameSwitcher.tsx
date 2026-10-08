@@ -15,7 +15,7 @@ export const DeviceFrameSwitcher: React.FC = () => {
         <div className="flex items-center space-x-2 min-w-0">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></div>
           <div className="flex items-center space-x-1.5 truncate text-[11px] sm:text-xs">
-            <span className="font-bold text-stone-200">CivicFound</span>
+            <span className="font-bold text-stone-200">BalikHub</span>
             <span className="text-stone-500">•</span>
             <span className="text-emerald-400 font-semibold flex items-center space-x-1">
               {role === "student" ? (

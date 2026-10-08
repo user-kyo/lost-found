@@ -115,52 +115,20 @@ app.post("/api/nlp/extract", async (req, res) => {
     return;
   }
 
-  const ai = getAIClient();
-  if (!ai) {
-    const fallback = ruleBasedExtract(description);
-    res.json({ success: true, source: "rule_engine", data: fallback });
-    return;
-  }
-
   try {
-    const prompt = `You are an intelligent NLP entity extraction engine for a School Lost and Found system.
-Extract structured lost item attributes from the student's natural language description:
-"${description}"
-
-Return a clean JSON object adhering to the schema.`;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-3.7-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            itemType: { type: Type.STRING, description: "e.g. Backpack, Water Bottle, AirPods, Jacket, Calculator, Keychain" },
-            color: { type: Type.STRING, description: "Main colors identified, e.g. Black with Blue accents" },
-            brand: { type: Type.STRING, description: "Identified brand, e.g. Jansport, Hydro Flask, Apple, Nike, or 'Unbranded / Unknown'" },
-            accessories: { type: Type.STRING, description: "Attached accessories like keychains, carabiners, stickers, charms, lanyards, or 'None'" },
-            distinguishingFeatures: { type: Type.STRING, description: "Key unique marks, stickers, engravings, dents, initials, scratches" },
-            locationHint: { type: Type.STRING, description: "Mentioned campus location if any, e.g. Near Library, Cafeteria, Science Building 2nd Floor" },
-            tags: { 
-              type: Type.ARRAY, 
-              items: { type: Type.STRING },
-              description: "Short categorical search keywords"
-            }
-          },
-          required: ["itemType", "color", "brand", "accessories", "distinguishingFeatures", "tags"]
-        }
-      }
+    const pyResponse = await fetch("http://127.0.0.1:8000/api/extract", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ description })
     });
-
-    if (response.text) {
-      const parsed = JSON.parse(response.text);
-      res.json({ success: true, source: "gemini_nlp", data: parsed });
+    
+    if (pyResponse.ok) {
+      const data = await pyResponse.json();
+      res.json(data);
       return;
     }
   } catch (error) {
-    console.error("Gemini NLP extraction error, falling back to pattern matcher:", error);
+    console.error("Failed to connect to Python TF-IDF backend, falling back:", error);
   }
 
   const fallback = ruleBasedExtract(description);
@@ -175,111 +143,29 @@ app.post("/api/nlp/match-analyze", async (req, res) => {
     return;
   }
 
-  const ai = getAIClient();
-  if (!ai) {
-    // Quick heuristic match calculation
-    let score = 50;
-    const matches: string[] = [];
-    const discrepancies: string[] = [];
-
-    const descLower = (lostDescription || "").toLowerCase();
-    const itemType = (foundItem.itemType || "").toLowerCase();
-    const color = (foundItem.color || "").toLowerCase();
-    const brand = (foundItem.brand || "").toLowerCase();
-
-    if (itemType && (descLower.includes(itemType) || (lostAttributes?.itemType && lostAttributes.itemType.toLowerCase().includes(itemType)))) {
-      score += 25;
-      matches.push(`Item Type Match (${foundItem.itemType})`);
-    } else {
-      discrepancies.push(`Item type slightly differs`);
-    }
-
-    if (color && (descLower.includes(color) || (lostAttributes?.color && lostAttributes.color.toLowerCase().includes(color)))) {
-      score += 15;
-      matches.push(`Color Match (${foundItem.color})`);
-    }
-
-    if (brand && brand !== "unbranded" && (descLower.includes(brand) || (lostAttributes?.brand && lostAttributes.brand.toLowerCase().includes(brand)))) {
-      score += 10;
-      matches.push(`Brand Match (${foundItem.brand})`);
-    }
-
-    if (foundItem.identifyingCharacteristics && descLower.length > 10) {
-      matches.push(`Characteristic overlap: ${foundItem.identifyingCharacteristics}`);
-    }
-
-    score = Math.min(98, Math.max(45, score));
-
-    res.json({
-      similarityScore: score,
-      confidence: score >= 80 ? "High" : score >= 60 ? "Medium" : "Low",
-      matchedAttributes: matches,
-      discrepancies: discrepancies,
-      aiSummary: `Heuristic match calculated at ${score}% similarity based on matching type, color palette, and accessory profile.`
-    });
-    return;
-  }
-
   try {
-    const prompt = `Compare the student's lost item report with the found item record in the school database:
-    
-Student Lost Report:
-Description: "${lostDescription || ''}"
-Extracted Attributes: ${JSON.stringify(lostAttributes || {})}
-
-Found Item in Storage:
-Title: "${foundItem.title || foundItem.itemType}"
-Type: "${foundItem.itemType}"
-Color: "${foundItem.color}"
-Brand: "${foundItem.brand}"
-Distinguishing Marks: "${foundItem.identifyingCharacteristics || foundItem.description}"
-Found Location: "${foundItem.foundLocation}"
-Found Date: "${foundItem.foundDate}"
-
-Evaluate similarity objectively. Generate an honest match percentage (1-100), list confirmed matching attributes, note any discrepancies or uncertainties, and provide an analytical staff guidance note reminding them that manual verification is mandatory.`;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-3.7-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            similarityScore: { type: Type.INTEGER, description: "Match percentage between 1 and 100" },
-            confidence: { type: Type.STRING, description: "High, Medium, or Low" },
-            matchedAttributes: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: "List of attributes that match closely (e.g. '✓ Black Color', '✓ Jansport Brand', '✓ Blue Keychain attached')"
-            },
-            discrepancies: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: "Points of difference or unconfirmed details"
-            },
-            aiSummary: { type: Type.STRING, description: "Objective reasoning summary for verification staff and student." }
-          },
-          required: ["similarityScore", "confidence", "matchedAttributes", "discrepancies", "aiSummary"]
-        }
-      }
+    const pyResponse = await fetch("http://127.0.0.1:8000/api/match-analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lostDescription, lostAttributes, foundItem })
     });
-
-    if (response.text) {
-      res.json(JSON.parse(response.text));
+    
+    if (pyResponse.ok) {
+      const data = await pyResponse.json();
+      res.json(data);
       return;
     }
   } catch (error) {
-    console.error("Gemini match analysis error:", error);
+    console.error("Failed to connect to Python TF-IDF backend for matching:", error);
   }
 
   // Fallback
   res.json({
-    similarityScore: 88,
-    confidence: "High",
-    matchedAttributes: ["✓ Item category matches", "✓ Primary color matches", "✓ Brand aligns with report"],
-    discrepancies: ["Location coordinates are approximate"],
-    aiSummary: "The reported characteristics strongly correspond to this cataloged item. Physical verification required."
+    similarityScore: 50,
+    confidence: "Medium",
+    matchedAttributes: ["Fallback match calculation used"],
+    discrepancies: ["Python TF-IDF server unreachable"],
+    aiSummary: "The TF-IDF server could not be reached. Physical verification required."
   });
 });
 

@@ -5,19 +5,16 @@ import {
   Search, 
   FileText, 
   ShieldCheck, 
-  CheckCircle2, 
   ArrowRight, 
   HardDrive, 
-  Clock, 
   Info,
-  MapPin,
-  ChevronRight,
-  Package
+  ChevronRight
 } from "lucide-react";
 
 export const StudentHome: React.FC = () => {
-  const { setStudentView, lostReports, claims, setSelectedClaim, setSelectedItem, foundItems } = useApp();
-
+  const { setStudentView, lostReports, claims, setSelectedClaim, foundItems, screenMode } = useApp();
+  
+  const isMobile = screenMode === "mobile";
   const activeClaims = claims.filter(c => c.status !== "released" && c.status !== "rejected");
   const recentReport = lostReports[0];
 
@@ -62,7 +59,7 @@ export const StudentHome: React.FC = () => {
       </div>
 
       {/* Two Prominent Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className={`grid gap-6 ${isMobile ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
         {/* Action Card 1: Report Lost Item */}
         <div 
           onClick={() => setStudentView("report")}
@@ -121,7 +118,7 @@ export const StudentHome: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className={`grid gap-4 ${isMobile ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"}`}>
           <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-2xs relative">
             <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center mb-3">
               1
@@ -165,9 +162,9 @@ export const StudentHome: React.FC = () => {
       </div>
 
       {/* User's Recent Status Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className={`grid gap-6 ${isMobile ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-3"}`}>
         {/* Left 2 Cols: Active Report status */}
-        <div className="lg:col-span-2 bg-white border border-stone-200/80 rounded-3xl p-6 sm:p-7 shadow-xs">
+        <div className={`${isMobile ? "" : "lg:col-span-2"} bg-white border border-stone-200/80 rounded-3xl p-6 sm:p-7 shadow-xs`}>
           <div className="flex items-center justify-between pb-4 border-b border-stone-100">
             <div className="flex items-center space-x-2">
               <FileText className="w-5 h-5 text-emerald-800" />
