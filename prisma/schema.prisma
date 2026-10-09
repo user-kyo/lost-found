@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  role          String    // "owner", "finder", "admin"
+  fullName      String
+  email         String    @unique
+  phone         String?
+  passwordHash  String
+  idType        String?   // For finders
+  idLast4       String?   // For finders
+  status        String    @default("active")
+  createdAt     DateTime  @default(now())
+
+  // Relations
+  postsFound        Post[]          @relation("FinderPosts")
+  postsReviewed     Post[]          @relation("ReviewedPosts")
+  claims            Claim[]         @relation("OwnerClaims")
+  reviewActions     ReviewAction[]
+  searchLogs        SearchLog[]
+  chatMessages      ChatMessage[]
+  handoverAdmin     HandoverLog[]   @relation("HandoverAdmin")
+  handoverFinder    HandoverLog[]   @relation("HandoverFinder")
+  reportsMade       UserReport[]    @relation("Reporter")
+  reportsReceived   UserReport[]    @relation("Reported")
+  blocksMade        UserBlock[]     @relation("Blocker")
+  blocksReceived    UserBlock[]     @relation("Blocked")
+  auditLogs         AuditLog[]
+}
+
+model Post {
+  id                String    @id @default(uuid())
+  finderId          String
+  category          String
+  color             String
+  publicDescription String
+  dateFound         DateTime
+  areaFound         String
+  imageUrl          String?
+  status            String    @default("pending_review") // pending_review, available, rejected, merged, claim_pending, returned, archived
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  finder            User      @relation("FinderPosts", fields: [finderId], references: [id])
+  reviewer          User?     @relation("ReviewedPosts", fields: [reviewedBy], references: [id])
+  privateDetails    PostPrivateDetail?
+  flags             PostFlag[]
+  reviewActions     ReviewAction[]
+  claims            Claim[]
+  handovers         HandoverLog[]
+}
+
+model PostPrivateDetail {
+  postId    String   @id
+  details   String
+  updatedAt DateTime @updatedAt
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model PostFlag {
+  id              String   @id @default(uuid())
+  postId          String
+  type            String   // duplicate, sensitive
+  relatedPostId   String?  // If type is duplicate
+  score           Float?   
+  detail          String
+  resolvedBy      String?
+  resolvedAt      DateTime?
+
+  post            Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model ReviewAction {
+  id          String   @id @default(uuid())
+  postId      String
+  adminId     String
+  action      String   // approve, edit, merge, reject
+  note        String?
+  createdAt   DateTime @default(now())
+
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  admin       User     @relation(fields: [adminId], references: [id])
+}
+
+model SearchLog {
+  id          String   @id @default(uuid())
+  userId      String
+  queryText   String
+  resultCount Int
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+model Claim {
+  id            String   @id @default(uuid())
+  postId        String
+  ownerId       String
+  status        String   @default("submitted") // submitted, chat_open, approved, completed, rejected, cancelled, no_show
+  ownerNote     String?
+  decidedBy     String?
+  decidedAt     DateTime?
+  rejectReason  String?
+  createdAt     DateTime @default(now())
+
+  post          Post     @relation(fields: [postId], references: [id])
+  owner         User     @relation("OwnerClaims", fields: [ownerId], references: [id])
+  chatThreads   ChatThread[]
+  handovers     HandoverLog[]
+
+  @@index([postId, status])
+}
+
+model ChatThread {
+  id        String   @id @default(uuid())
+  claimId   String
+  status    String   @default("open")
+
+  claim     Claim    @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+  reports   UserReport[]
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  threadId  String
+  senderId  String
+  body      String
+  imageUrl  String?
+  isStaff   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender    User       @relation(fields: [senderId], references: [id])
+}
+
+model UserReport {
+  id          String   @id @default(uuid())
+  reporterId  String
+  reportedId  String
+  threadId    String?
+  reason      String
+  createdAt   DateTime @default(now())
+
+  reporter    User        @relation("Reporter", fields: [reporterId], references: [id])
+  reported    User        @relation("Reported", fields: [reportedId], references: [id])
+  thread      ChatThread? @relation(fields: [threadId], references: [id])
+}
+
+model UserBlock {
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  blocker   User @relation("Blocker", fields: [blockerId], references: [id])
+  blocked   User @relation("Blocked", fields: [blockedId], references: [id])
+
+  @@id([blockerId, blockedId])
+}
+
+model HandoverLog {
+  id                String   @id @default(uuid())
+  claimId           String
+  postId            String
+  adminId           String
+  claimantName      String
+  claimantIdType    String
+  finderId          String
+  questionsAsked    String
+  result            String
+  notes             String?
+  createdAt         DateTime @default(now())
+
+  claim             Claim @relation(fields: [claimId], references: [id])
+  post              Post  @relation(fields: [postId], references: [id])
+  admin             User  @relation("HandoverAdmin", fields: [adminId], references: [id])
+  finder            User  @relation("HandoverFinder", fields: [finderId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String
+  action    String
+  entity    String
+  entityId  String
+  metadata  String?  // JSON string
+  createdAt DateTime @default(now())
+
+  actor     User     @relation(fields: [actorId], references: [id])
+}

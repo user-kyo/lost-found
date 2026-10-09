@@ -1,4 +1,12 @@
-export type UserRole = "student" | "staff";
+export type UserRole = "student" | "staff" | "citizen" | "admin";
+
+export interface User {
+  id: string;
+  role: UserRole;
+  fullName: string;
+  email: string;
+  token?: string;
+}
 
 export type ItemStatus = "unclaimed" | "claim_pending" | "verified" | "ready_for_retrieval" | "claimed" | "archived";
 

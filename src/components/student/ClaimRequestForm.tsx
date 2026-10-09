@@ -16,6 +16,7 @@ import {
 
 export const ClaimRequestForm: React.FC = () => {
   const { 
+    user,
     selectedItem, 
     lastSubmittedReport, 
     submitClaimRequest, 
@@ -55,25 +56,35 @@ export const ClaimRequestForm: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const newClaim = submitClaimRequest({
-        itemId: selectedItem.id,
-        lostReportId: lastSubmittedReport?.id,
-        claimantName,
-        claimantId,
-        claimantType,
-        contactEmail,
-        contactPhone,
-        submittedDescription,
-        proofOfOwnership,
-        supportingImageUrl: supportingImageUrl || undefined,
-        similarityScore: 94
-      });
+    const submitRealClaim = async () => {
+      try {
+        const res = await fetch("/api/claims", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user?.token}`
+          },
+          body: JSON.stringify({
+            postId: selectedItem.id,
+            ownerNote: proofOfOwnership + " " + submittedDescription,
+          })
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          setSelectedClaim(data.claim);
+          setStudentView("claim_tracking");
+        } else {
+          alert("Failed to submit claim.");
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
 
-      setSelectedClaim(newClaim);
-      setIsSubmitting(false);
-      setStudentView("claim_tracking");
-    }, 600);
+    submitRealClaim();
   };
 
   return (

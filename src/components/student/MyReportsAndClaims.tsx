@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 interface Props {
-  initialTab?: "reports" | "claims";
+  initialTab?: "reports" | "claims" | "found_items";
 }
 
 export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) => {
@@ -23,10 +23,41 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
     foundItems, 
     setStudentView, 
     setSelectedClaim, 
-    setSelectedItem 
+    setSelectedItem,
+    user
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<"reports" | "claims">(initialTab);
+  const [activeTab, setActiveTab] = useState<"reports" | "claims" | "found_items">(initialTab);
+  const [myFoundItems, setMyFoundItems] = useState<any[]>([]);
+  const [myClaims, setMyClaims] = useState<any[]>([]);
+  const [loadingFoundItems, setLoadingFoundItems] = useState(false);
+  const [loadingClaims, setLoadingClaims] = useState(false);
+
+  React.useEffect(() => {
+    if (activeTab === "found_items" && user?.token) {
+      setLoadingFoundItems(true);
+      fetch("/api/posts/mine", {
+        headers: { "Authorization": `Bearer ${user.token}` }
+      })
+      .then(res => res.json())
+      .then(data => setMyFoundItems(data))
+      .catch(err => console.error("Failed to fetch found items", err))
+      .finally(() => setLoadingFoundItems(false));
+    }
+  }, [activeTab, user?.token]);
+
+  React.useEffect(() => {
+    if (activeTab === "claims" && user?.token) {
+      setLoadingClaims(true);
+      fetch("/api/claims/mine", {
+        headers: { "Authorization": `Bearer ${user.token}` }
+      })
+      .then(res => res.json())
+      .then(data => setMyClaims(data))
+      .catch(err => console.error("Failed to fetch my claims", err))
+      .finally(() => setLoadingClaims(false));
+    }
+  }, [activeTab, user?.token]);
 
   return (
     <div className="w-full space-y-6">
@@ -41,13 +72,22 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
           </p>
         </div>
 
-        <button
-          onClick={() => setStudentView("report")}
-          className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-1.5 self-start sm:self-auto"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>New Lost Report</span>
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setStudentView("report")}
+            className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-xl transition-colors flex items-center space-x-1.5"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span className="hidden sm:inline">Lost Report</span>
+          </button>
+          <button
+            onClick={() => setStudentView("report_found")}
+            className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-1.5"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">Found Item</span>
+          </button>
+        </div>
       </div>
 
       {/* Tab Switcher */}
@@ -73,7 +113,19 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
           }`}
         >
           <ShieldCheck className="w-4 h-4" />
-          <span>My Claim Requests ({claims.length})</span>
+          <span>My Claim Requests</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("found_items")}
+          className={`pb-3 px-3 text-xs font-bold border-b-2 transition-all flex items-center space-x-2 ${
+            activeTab === "found_items"
+              ? "border-emerald-800 text-emerald-800"
+              : "border-transparent text-stone-500 hover:text-stone-900"
+          }`}
+        >
+          <PlusCircle className="w-4 h-4" />
+          <span>My Found Items</span>
         </button>
       </div>
 
@@ -152,9 +204,11 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
             ))
           )}
         </div>
-      ) : (
+      ) : activeTab === "claims" ? (
         <div className="space-y-4">
-          {claims.length === 0 ? (
+          {loadingClaims ? (
+            <div className="p-12 text-center text-stone-500 font-semibold">Loading your claims...</div>
+          ) : myClaims.length === 0 ? (
             <div className="bg-white border border-stone-200 rounded-3xl p-12 text-center text-stone-400 space-y-3">
               <ShieldCheck className="w-8 h-8 mx-auto text-stone-300" />
               <p className="text-sm font-bold text-stone-800">No active claim requests</p>
@@ -166,8 +220,8 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
               </button>
             </div>
           ) : (
-            claims.map((claim) => {
-              const item = foundItems.find(i => i.id === claim.itemId);
+            myClaims.map((claim) => {
+              const item = claim.post; // We include { post: true } in the backend response now
 
               return (
                 <div
@@ -177,15 +231,13 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
                     <div className="flex items-center space-x-2.5">
                       <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2 py-0.5 rounded-md border border-stone-200">
-                        Claim #{claim.id}
+                        Claim #{claim.id.slice(-6)}
                       </span>
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                        claim.status === "ready_for_retrieval"
+                        claim.status === "approved"
                           ? "bg-emerald-100 text-emerald-800 animate-pulse"
-                          : claim.status === "approved"
+                          : claim.status === "released" || claim.status === "completed"
                           ? "bg-stone-200 text-stone-800"
-                          : claim.status === "released"
-                          ? "bg-stone-100 text-stone-700"
                           : claim.status === "rejected"
                           ? "bg-red-100 text-red-800"
                           : "bg-amber-100 text-amber-800"
@@ -195,37 +247,33 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
                     </div>
 
                     <span className="text-xs text-stone-400">
-                      Submitted: {new Date(claim.submittedDate).toLocaleDateString()}
+                      Submitted: {new Date(claim.createdAt).toLocaleDateString()}
                     </span>
                   </div>
 
                   <div className="flex items-start space-x-4">
                     {item && (
-                      <img
-                        src={item.imageUrl}
-                        alt={item.title}
-                        referrerPolicy="no-referrer"
-                        className="w-16 h-16 rounded-xl object-cover border border-stone-200 shrink-0"
-                      />
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <h4 className="text-sm font-bold text-stone-900">
+                          {item.category} - {item.color}
+                        </h4>
+                        <p className="text-xs text-stone-500">
+                          Found at {item.areaFound}
+                        </p>
+                        <p className="text-xs text-stone-700 line-clamp-1 italic mt-2">
+                          Note: "{claim.ownerNote}"
+                        </p>
+                      </div>
                     )}
-                    <div className="flex-1 min-w-0 space-y-1">
-                      <h4 className="text-sm font-bold text-stone-900">
-                        {item?.title || `Item #${claim.itemId}`}
-                      </h4>
-                      <p className="text-xs text-stone-500">
-                        Handover venue: San Pablo City LGU Office
-                      </p>
-                      <p className="text-xs text-stone-700 line-clamp-1">
-                        Proof: {claim.proofOfOwnership}
-                      </p>
-                    </div>
                   </div>
 
                   <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
                     <span className="text-xs text-stone-500">
-                      {claim.status === "ready_for_retrieval"
-                        ? "Approved • Coordinate LGU office handover"
-                        : "LGU desk officers reviewing ownership proof"}
+                      {claim.status === "approved"
+                        ? "Approved • Ready for Meetup"
+                        : claim.status === "released" || claim.status === "completed"
+                        ? "Item has been successfully returned!"
+                        : "Waiting for finder/LGU to review your claim"}
                     </span>
 
                     <button
@@ -235,13 +283,87 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
                       }}
                       className="px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition-colors flex items-center space-x-1"
                     >
-                      <span>Track Progress</span>
+                      <span>{claim.status === "released" || claim.status === "completed" ? "View Details" : "Track Progress"}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
               );
             })
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {loadingFoundItems ? (
+            <div className="p-12 text-center text-stone-500 font-semibold">Loading your submitted items...</div>
+          ) : myFoundItems.length === 0 ? (
+            <div className="bg-white border border-stone-200 rounded-3xl p-12 text-center text-stone-400 space-y-3">
+              <PlusCircle className="w-8 h-8 mx-auto text-stone-300" />
+              <p className="text-sm font-bold text-stone-800">You haven't submitted any found items</p>
+              <button
+                onClick={() => setStudentView("report_found")}
+                className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-bold"
+              >
+                Submit Found Item
+              </button>
+            </div>
+          ) : (
+            myFoundItems.map((item: any) => (
+              <div
+                key={item.id}
+                className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 shadow-2xs hover:shadow-xs transition-all space-y-4"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
+                  <div className="flex items-center space-x-2.5">
+                    <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2 py-0.5 rounded-md border border-stone-200">
+                      ID: {item.id.slice(-6)}
+                    </span>
+                    <span className="text-xs font-bold text-emerald-800">
+                      {item.category} ({item.color})
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                      item.status === 'pending_review' ? 'bg-amber-100 text-amber-800' :
+                      item.status === 'available' ? 'bg-emerald-100 text-emerald-800' :
+                      item.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-stone-100'
+                    }`}>
+                      {item.status.replace("_", " ")}
+                    </span>
+                  </div>
+                  <span className="text-xs text-stone-400">
+                    Found on {new Date(item.dateFound).toLocaleDateString()} at {item.areaFound}
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <h5 className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1">Public Description</h5>
+                    <p className="text-xs text-stone-700">{item.publicDescription}</p>
+                  </div>
+                  
+                  {item.privateDetails?.details && (
+                    <div className="p-3 bg-stone-50 rounded-xl border border-stone-100">
+                      <h5 className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3" /> Private Details (Hidden from Public)
+                      </h5>
+                      <p className="text-xs text-stone-600">{item.privateDetails.details}</p>
+                    </div>
+                  )}
+
+                  {item.flags && item.flags.length > 0 && (
+                    <div className="p-3 bg-red-50 rounded-xl border border-red-100">
+                      <h5 className="text-[10px] font-bold text-red-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> Auto-Flagged by System
+                      </h5>
+                      <ul className="list-disc pl-4 space-y-1">
+                        {item.flags.map((flag: any) => (
+                          <li key={flag.id} className="text-xs text-red-600">{flag.detail}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
           )}
         </div>
       )}

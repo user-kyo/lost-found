@@ -21,53 +21,72 @@ export const AIMatchResults: React.FC = () => {
   const { 
     foundItems, 
     lastSubmittedReport, 
-    activeMatchResults, 
     setActiveMatchResults, 
     setSelectedItem, 
-    setStudentView 
+    setStudentView,
+    user
   } = useApp();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(false);
+  const [serverMatches, setServerMatches] = useState<AIMatchResult[]>([]);
 
-  // If no match results yet, calculate on mount using last report or default
+  // Fetch real NLP-ranked search results from the Node/Python backend
   useEffect(() => {
-    if (activeMatchResults.length === 0 && lastSubmittedReport) {
+    const delayDebounceFn = setTimeout(() => {
+      const q = searchQuery.trim() || (lastSubmittedReport?.rawDescription || "lost item");
+      
       setIsLoading(true);
-      matchFoundItemsWithReport(
-        lastSubmittedReport.rawDescription,
-        lastSubmittedReport.extractedAttributes,
-        foundItems
-      ).then(results => {
-        setActiveMatchResults(results);
-        setIsLoading(false);
-      });
-    }
-  }, [lastSubmittedReport, foundItems, activeMatchResults.length, setActiveMatchResults]);
+      fetch("/api/search", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${user?.token}`
+        },
+        body: JSON.stringify({ query: q })
+      })
+      .then(res => res.json())
+      .then(data => {
+        // if data is just unranked posts, we map them. If it's ranked objects, we use them.
+        if (Array.isArray(data)) {
+          const formatted = data.map((d: any) => {
+            if (d.item && d.similarityScore !== undefined) {
+              // It's a ranked match from Python NLP
+              return {
+                item: d.item,
+                similarityScore: d.similarityScore,
+                confidence: d.similarityScore > 50 ? "High" : "Medium",
+                matchedAttributes: d.matchedAttributes || ["TF-IDF Text Match"],
+                discrepancies: [],
+                aiSummary: "Ranked by Hybrid TF-IDF AI Engine"
+              };
+            } else {
+              // Fallback unranked posts
+              return {
+                item: d,
+                similarityScore: 70,
+                confidence: "Medium",
+                matchedAttributes: ["Category match"],
+                discrepancies: [],
+                aiSummary: "Unranked item"
+              };
+            }
+          });
+          setServerMatches(formatted);
+        }
+      })
+      .catch(err => console.error("Search API failed", err))
+      .finally(() => setIsLoading(false));
+    }, 500);
 
-  // Display items: either activeMatchResults or mapped from foundItems
-  const displayResults: AIMatchResult[] = activeMatchResults.length > 0
-    ? activeMatchResults
-    : foundItems.map(item => ({
-        item,
-        similarityScore: 70,
-        confidence: "Medium",
-        matchedAttributes: [`${item.itemType} in inventory`, `${item.color} color`],
-        discrepancies: [],
-        aiSummary: "Found item in municipal inventory matching general category."
-      }));
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, lastSubmittedReport, user?.token]);
 
-  const filtered = displayResults.filter(({ item }) => {
-    const matchesQuery = (
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.itemType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.color.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.foundLocation.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+  const filtered = serverMatches.filter(({ item }) => {
+    if (!item) return false;
     const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
-    return matchesQuery && matchesCategory;
+    return matchesCategory;
   });
 
   const handleSelectMatch = (item: FoundItem) => {
@@ -180,13 +199,19 @@ export const AIMatchResults: React.FC = () => {
               >
                 <div>
                   {/* Photo & Match Badge Container */}
-                  <div className="relative aspect-4/3 bg-stone-100 overflow-hidden">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                  <div className="relative aspect-4/3 bg-stone-100 overflow-hidden flex items-center justify-center">
+                    {item.imageUrl ? (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title || "Found Item"}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="text-stone-300">
+                        <Search className="w-12 h-12" />
+                      </div>
+                    )}
                     
                     {/* Owner-visible rank only */}
                     <div className="absolute top-3 left-3">
@@ -199,7 +224,7 @@ export const AIMatchResults: React.FC = () => {
                     {/* Status Badge */}
                     <div className="absolute top-3 right-3">
                       <span className="px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-xs text-[10px] font-bold text-stone-700 shadow-xs uppercase">
-                        {item.status.replace("_", " ")}
+                        {item.status ? item.status.replace("_", " ") : "AVAILABLE"}
                       </span>
                     </div>
                   </div>
@@ -208,13 +233,13 @@ export const AIMatchResults: React.FC = () => {
                   <div className="p-5 space-y-3">
                     <div>
                       <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
-                        {item.category} • #{item.id}
+                        {item.category} • #{item.id?.toString().slice(-6)}
                       </span>
                       <h3 className="text-base font-bold text-stone-900 group-hover:text-emerald-800 transition-colors">
-                        {item.title}
+                        {item.title || `${item.color} ${item.category}`}
                       </h3>
                       <p className="text-xs text-stone-600 mt-1 line-clamp-2 leading-relaxed">
-                        {item.description}
+                        {item.publicDescription || item.description}
                       </p>
                     </div>
 
@@ -240,11 +265,11 @@ export const AIMatchResults: React.FC = () => {
                     <div className="space-y-1 text-xs text-stone-600 pt-1">
                       <div className="flex items-center space-x-1.5 text-[11px] text-stone-500">
                         <MapPin className="w-3.5 h-3.5 text-stone-400 shrink-0" />
-                        <span className="truncate">Found: {item.foundLocation}</span>
+                        <span className="truncate">Found: {item.areaFound || item.foundLocation}</span>
                       </div>
                       <div className="flex items-center space-x-1.5 text-[11px] text-stone-500">
                         <Calendar className="w-3.5 h-3.5 text-stone-400 shrink-0" />
-                        <span>Date Logged: {item.foundDate}</span>
+                        <span>Date Logged: {item.dateFound ? new Date(item.dateFound).toLocaleDateString() : item.foundDate}</span>
                       </div>
                     </div>
                   </div>

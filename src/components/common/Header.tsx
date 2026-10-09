@@ -15,6 +15,8 @@ import {
 
 export const Header: React.FC = () => {
   const { 
+    user,
+    logout,
     role, 
     setRole, 
     studentView, 
@@ -93,34 +95,26 @@ export const Header: React.FC = () => {
                     <span>Report Lost Item</span>
                   </button>
                   <button
-                    onClick={() => setStudentView("search")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      studentView === "search" || studentView === "match_details"
+                    onClick={() => setStudentView("report_found")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
+                      studentView === "report_found"
                         ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
                     }`}
                   >
-                    Find My Item
+                    <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Report Found Item</span>
                   </button>
+                  {/* Find My Item removed to prevent catalog browsing scams */}
                   <button
                     onClick={() => setStudentView("reports")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      studentView === "reports"
+                      studentView === "reports" || studentView === "claims" || studentView === "claim_tracking"
                         ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
                     }`}
                   >
-                    My Reports
-                  </button>
-                  <button
-                    onClick={() => setStudentView("claims")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      studentView === "claims" || studentView === "claim_tracking"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    My Claims
+                    My Activity
                   </button>
                 </>
               ) : (
@@ -133,47 +127,17 @@ export const Header: React.FC = () => {
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
                     }`}
                   >
-                    LGU Dashboard
+                    LGU Review Queue
                   </button>
                   <button
-                    onClick={() => setStaffView("found_items")}
+                    onClick={() => setStaffView("claims")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      staffView === "found_items"
+                      staffView === "claims" || staffView === "claim_requests"
                         ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
                     }`}
                   >
-                    Found Inventory
-                  </button>
-                  <button
-                    onClick={() => setStaffView("claim_requests")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      staffView === "claim_requests"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    Claim Verification
-                  </button>
-                  <button
-                    onClick={() => setStaffView("claim_requests")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      staffView === "claim_requests"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    LGU Handover
-                  </button>
-                  <button
-                    onClick={() => setStaffView("audit_logs")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      staffView === "audit_logs"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    Audit Logs
+                    LGU Claims & Handover
                   </button>
                 </>
               )}
@@ -209,33 +173,15 @@ export const Header: React.FC = () => {
               )}
             </button>
 
-            {/* Role Switcher Pill */}
-            <div className="flex items-center bg-stone-100 p-0.5 sm:p-1 rounded-xl border border-stone-200">
-              <button
-                onClick={() => setRole("student")}
-                className={`flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
-                  role === "student"
-                    ? "bg-white text-emerald-900 shadow-2xs"
-                    : "text-stone-600 hover:text-stone-900"
-                }`}
-                title="Switch to Citizen Portal"
-              >
-                <User className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span>Citizen</span>
-              </button>
-              <button
-                onClick={() => setRole("staff")}
-                className={`flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
-                  role === "staff"
-                    ? "bg-emerald-800 text-white shadow-2xs"
-                    : "text-stone-600 hover:text-stone-900"
-                }`}
-                title="Switch to LGU Officer Portal"
-              >
-                <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span>LGU</span>
-              </button>
-            </div>
+            {/* Logout Button */}
+            <button
+              onClick={() => logout()}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-[11px] sm:text-xs font-semibold transition-all border border-stone-200"
+              title="Sign Out"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign Out ({user?.fullName})</span>
+            </button>
           </div>
         </div>
 
@@ -260,29 +206,14 @@ export const Header: React.FC = () => {
                 >
                   Report Lost Item
                 </button>
-                <button
-                  onClick={() => setStudentView("search")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    studentView === "search" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  Find My Item
-                </button>
+                {/* Find My Item removed */}
                 <button
                   onClick={() => setStudentView("reports")}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    studentView === "reports" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
+                    studentView === "reports" || studentView === "claims" || studentView === "claim_tracking" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
                   }`}
                 >
-                  My Reports
-                </button>
-                <button
-                  onClick={() => setStudentView("claims")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    studentView === "claims" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  My Claims
+                  My Activity
                 </button>
               </>
             ) : (
@@ -293,39 +224,15 @@ export const Header: React.FC = () => {
                     staffView === "dashboard" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
                   }`}
                 >
-                  LGU Dashboard
+                  LGU Review Queue
                 </button>
                 <button
-                  onClick={() => setStaffView("found_items")}
+                  onClick={() => setStaffView("claims")}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    staffView === "found_items" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
+                    staffView === "claims" || staffView === "claim_requests" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
                   }`}
                 >
-                  Found Items
-                </button>
-                <button
-                  onClick={() => setStaffView("claim_requests")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    staffView === "claim_requests" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  Claims
-                </button>
-                <button
-                  onClick={() => setStaffView("claim_requests")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    staffView === "claim_requests" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  LGU Handover
-                </button>
-                <button
-                  onClick={() => setStaffView("audit_logs")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    staffView === "audit_logs" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  Audit Logs
+                  LGU Claims
                 </button>
               </>
             )}

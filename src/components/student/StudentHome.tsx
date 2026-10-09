@@ -47,19 +47,12 @@ export const StudentHome: React.FC = () => {
               <Sparkles className="w-4 h-4 text-white" />
               <span>Report a Lost Item</span>
             </button>
-            <button
-              onClick={() => setStudentView("search")}
-              className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-stone-100 font-semibold text-sm rounded-xl backdrop-blur-xs border border-white/20 transition-all flex items-center space-x-2"
-            >
-              <Search className="w-4 h-4 text-stone-300" />
-              <span>Search Found Posts</span>
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Two Prominent Action Cards */}
-      <div className={`grid gap-6 ${isMobile ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
+      {/* Single Prominent Action Card */}
+      <div className={`grid gap-6 grid-cols-1`}>
         {/* Action Card 1: Report Lost Item */}
         <div 
           onClick={() => setStudentView("report")}
@@ -80,30 +73,6 @@ export const StudentHome: React.FC = () => {
           </div>
           <div className="mt-6 pt-4 border-t border-stone-100 flex items-center text-sm font-bold text-emerald-800 group-hover:text-emerald-900">
             <span>Start guided description</span>
-            <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </div>
-
-        {/* Action Card 2: Search for My Lost Item */}
-        <div 
-          onClick={() => setStudentView("search")}
-          className="group relative bg-white border border-stone-200/90 hover:border-amber-600 rounded-3xl p-6 sm:p-8 shadow-2xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-        >
-          <div className="space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100/80 text-amber-800 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors shadow-2xs">
-              <Search className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-stone-900 group-hover:text-amber-700 transition-colors">
-                Search Found Item Catalog
-              </h3>
-              <p className="text-stone-600 text-sm mt-1.5 leading-relaxed">
-                Browse approved public found-item posts. Filter by category, location found, and date.
-              </p>
-            </div>
-          </div>
-          <div className="mt-6 pt-4 border-t border-stone-100 flex items-center text-sm font-bold text-amber-700 group-hover:text-amber-800">
-            <span>Browse current items ({foundItems.filter(i => i.status !== 'claimed').length} available)</span>
             <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>
