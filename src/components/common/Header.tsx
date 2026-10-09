@@ -53,7 +53,7 @@ export const Header: React.FC = () => {
               <div>
                 <div className="flex items-center space-x-1.5">
                   <span className="font-extrabold text-stone-900 text-sm sm:text-base tracking-tight group-hover:text-emerald-800 transition-colors">
-                    CivicFound
+                    BalikHub
                   </span>
                   <span className="inline-flex items-center px-1.5 py-0.2 rounded-sm text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
                     LGU

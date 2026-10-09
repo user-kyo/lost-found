@@ -30,8 +30,11 @@ export const StaffDashboard: React.FC = () => {
     setSelectedClaim, 
     setIsVerifyModalOpen, 
     setIsRegisterModalOpen, 
-    setIsScannerModalOpen 
+    setIsScannerModalOpen,
+    screenMode
   } = useApp();
+
+  const isMobile = screenMode === "mobile";
 
   const totalFound = foundItems.length;
   const unclaimedCount = foundItems.filter(i => i.status === "unclaimed").length;
@@ -84,7 +87,7 @@ export const StaffDashboard: React.FC = () => {
       </div>
 
       {/* 5 KPI Metric Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      <div className={`grid gap-3 sm:gap-4 ${isMobile ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"}`}>
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-stone-200 shadow-2xs space-y-1.5 sm:space-y-2 min-w-0">
           <div className="flex items-center justify-between text-stone-400">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider truncate">Total Found</span>
@@ -132,9 +135,9 @@ export const StaffDashboard: React.FC = () => {
       </div>
 
       {/* Main Grid: Left 2 Cols (Activity + AI Overview), Right Col (Storage Box Status) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+      <div className={`grid gap-6 sm:gap-8 ${isMobile ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-12"}`}>
         {/* Left Column (8 Cols): AI Matching Overview + Recent Activity */}
-        <div className="lg:col-span-8 space-y-6 sm:space-y-8 min-w-0">
+        <div className={`${isMobile ? "" : "lg:col-span-8"} space-y-6 sm:space-y-8 min-w-0`}>
           {/* AI Matching Overview Card */}
           <div className="bg-white border border-stone-200 rounded-3xl p-4 sm:p-7 shadow-xs space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100">
@@ -153,7 +156,7 @@ export const StaffDashboard: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 text-xs">
+            <div className={`grid gap-2.5 sm:gap-4 text-xs ${isMobile ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-4"}`}>
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 min-w-0">
                 <span className="text-stone-400 block text-[9px] sm:text-[10px] uppercase font-bold truncate">Total AI Matches</span>
                 <p className="text-lg sm:text-xl font-bold text-stone-900 mt-0.5">28</p>
@@ -259,7 +262,7 @@ export const StaffDashboard: React.FC = () => {
         </div>
 
         {/* Right Column (4 Cols): Physical Smart Storage Box Status */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className={`${isMobile ? "" : "lg:col-span-4"} space-y-6`}>
           <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-xs space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-stone-100">
               <div className="flex items-center space-x-2">

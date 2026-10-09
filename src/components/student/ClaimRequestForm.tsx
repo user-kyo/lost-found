@@ -246,7 +246,7 @@ export const ClaimRequestForm: React.FC = () => {
         {/* Date Submitted Info */}
         <div className="pt-2 text-xs text-stone-500 flex items-center justify-between">
           <span>Date of Claim: {new Date().toISOString().split("T")[0]}</span>
-          <span>Encrypted Submission • CivicFound Security v3</span>
+          <span>Encrypted Submission • BalikHub Security v3</span>
         </div>
 
         {/* Form Submission */}

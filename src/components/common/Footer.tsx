@@ -12,7 +12,7 @@ export const Footer: React.FC = () => {
               <div className="w-6 h-6 rounded-md bg-emerald-800 flex items-center justify-center text-white">
                 <Shield className="w-3.5 h-3.5" />
               </div>
-              <span>CivicFound Smart L&F</span>
+              <span>BalikHub Smart L&F</span>
             </div>
             <p className="text-stone-400 leading-relaxed">
               An intelligent civic lost-and-found system pairing NLP entity recognition with secure physical IoT municipal storage units.
