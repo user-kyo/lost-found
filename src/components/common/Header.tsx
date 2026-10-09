@@ -10,7 +10,6 @@ import {
   CheckCircle2, 
   Sparkles, 
   PlusCircle, 
-  QrCode,
   ArrowRightLeft
 } from "lucide-react";
 
@@ -25,7 +24,6 @@ export const Header: React.FC = () => {
     notifications, 
     setIsNotifDrawerOpen, 
     setIsRegisterModalOpen, 
-    setIsScannerModalOpen,
     storageBoxes,
     screenMode 
   } = useApp();
@@ -158,14 +156,14 @@ export const Header: React.FC = () => {
                     Claim Verification
                   </button>
                   <button
-                    onClick={() => setStaffView("storage_box")}
+                    onClick={() => setStaffView("claim_requests")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      staffView === "storage_box"
+                      staffView === "claim_requests"
                         ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
                     }`}
                   >
-                    Smart Lockers
+                    LGU Handover
                   </button>
                   <button
                     onClick={() => setStaffView("audit_logs")}
@@ -193,13 +191,6 @@ export const Header: React.FC = () => {
                 >
                   <PlusCircle className="w-3.5 h-3.5" />
                   <span>Register Item</span>
-                </button>
-                <button
-                  onClick={() => setIsScannerModalOpen(true)}
-                  className="px-2.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold flex items-center space-x-1 shadow-2xs transition-colors"
-                >
-                  <QrCode className="w-3.5 h-3.5" />
-                  <span>Scan RFID/QR</span>
                 </button>
               </div>
             )}
@@ -321,12 +312,12 @@ export const Header: React.FC = () => {
                   Claims
                 </button>
                 <button
-                  onClick={() => setStaffView("storage_box")}
+                  onClick={() => setStaffView("claim_requests")}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    staffView === "storage_box" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
+                    staffView === "claim_requests" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
                   }`}
                 >
-                  Smart Lockers
+                  LGU Handover
                 </button>
                 <button
                   onClick={() => setStaffView("audit_logs")}

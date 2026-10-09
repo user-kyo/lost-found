@@ -53,7 +53,7 @@ export async function extractItemAttributesNLP(description: string): Promise<NLP
     brand,
     accessories: accessories.length > 0 ? accessories.join(", ") : "None detected",
     distinguishingFeatures: description.length > 15 ? description : "Standard model without unique serial marks mentioned",
-    locationHint: text.includes("library") ? "Library" : text.includes("cafeteria") ? "Cafeteria" : text.includes("gym") ? "Gymnasium" : "Campus Area",
+    locationHint: text.includes("library") ? "Library" : text.includes("city hall") ? "City Hall" : text.includes("terminal") ? "Terminal" : "San Pablo City",
     tags: [itemType, ...(matchedColors.map(c => c.charAt(0).toUpperCase() + c.slice(1))), brand !== "Unbranded / Unknown" ? brand : ""].filter(Boolean),
     confidence: "92% Pattern Confidence"
   };
@@ -64,15 +64,15 @@ export async function matchFoundItemsWithReport(
   extracted: NLPExtractedAttributes,
   foundItems: FoundItem[]
 ): Promise<AIMatchResult[]> {
-  // Score every item in inventory
+  // Rank only owner-visible available posts. Private verification details are excluded.
   const results: AIMatchResult[] = [];
 
-  for (const item of foundItems) {
+  for (const item of foundItems.filter(item => item.status === "unclaimed")) {
     const descLower = (lostDescription || "").toLowerCase();
     const itemTypeLower = (item.itemType || "").toLowerCase();
     const colorLower = (item.color || "").toLowerCase();
     const brandLower = (item.brand || "").toLowerCase();
-    const charLower = (item.identifyingCharacteristics || "").toLowerCase();
+    const publicDescriptionLower = (item.description || "").toLowerCase();
 
     let score = 40;
     const matchedAttrs: string[] = [];
@@ -118,7 +118,7 @@ export async function matchFoundItemsWithReport(
     if (extracted.accessories && extracted.accessories !== "None detected") {
       const accWords = extracted.accessories.toLowerCase().split(/[ ,/]+/);
       for (const aw of accWords) {
-        if (aw.length > 3 && (charLower.includes(aw) || item.description.toLowerCase().includes(aw))) {
+        if (aw.length > 3 && publicDescriptionLower.includes(aw)) {
           score += 8;
           matchedAttrs.push(`Characteristic Overlap: "${aw}" detected in record`);
           break;
@@ -140,9 +140,9 @@ export async function matchFoundItemsWithReport(
       item,
       similarityScore: finalScore,
       confidence,
-      matchedAttributes: matchedAttrs.length > 0 ? matchedAttrs : ["General physical profile alignment"],
+      matchedAttributes: matchedAttrs.length > 0 ? matchedAttrs : ["General public-description alignment"],
       discrepancies,
-      aiSummary: `AI similarity calculated at ${finalScore}% based on ${matchedAttrs.length} matching attribute vector(s). Manual staff inspection required for validation.`
+      aiSummary: "Ranked from public post details only. LGU staff must verify ownership at the LGU office."
     });
   }
 

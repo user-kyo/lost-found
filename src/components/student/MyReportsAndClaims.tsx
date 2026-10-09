@@ -9,8 +9,7 @@ import {
   Search, 
   PlusCircle, 
   CheckCircle2, 
-  AlertCircle,
-  HardDrive
+  AlertCircle
 } from "lucide-react";
 
 interface Props {
@@ -38,7 +37,7 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
             My Activity & Records
           </h1>
           <p className="text-sm text-stone-500 mt-1">
-            Track your submitted lost-item reports and live retrieval claim statuses.
+            Track your submitted lost-item reports and claim verification statuses.
           </p>
         </div>
 
@@ -163,7 +162,7 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
                 onClick={() => setStudentView("search")}
                 className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-bold"
               >
-                Browse Storage Catalog
+                Browse Found Posts
               </button>
             </div>
           ) : (
@@ -214,7 +213,7 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
                         {item?.title || `Item #${claim.itemId}`}
                       </h4>
                       <p className="text-xs text-stone-500">
-                        Storage Location: {item?.storageBoxId} • Slot {item?.storageSlotId}
+                        Handover venue: San Pablo City LGU Office
                       </p>
                       <p className="text-xs text-stone-700 line-clamp-1">
                         Proof: {claim.proofOfOwnership}
@@ -225,7 +224,7 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
                   <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
                     <span className="text-xs text-stone-500">
                       {claim.status === "ready_for_retrieval"
-                        ? "Passcode active • Ready for smart locker retrieval"
+                        ? "Approved • Coordinate LGU office handover"
                         : "LGU desk officers reviewing ownership proof"}
                     </span>
 

@@ -6,7 +6,6 @@ import {
   Upload, 
   CheckCircle2, 
   AlertTriangle, 
-  HardDrive, 
   FileText, 
   User, 
   Mail, 
@@ -89,7 +88,7 @@ export const ClaimRequestForm: React.FC = () => {
           <span>Back to Match Comparison</span>
         </button>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
-          Submit Claim & Retrieval Request
+          Submit Claim Request
         </h1>
         <p className="text-sm text-stone-500 mt-1">
           Provide identification and verifiable proof of ownership for municipal officer review.
@@ -110,7 +109,7 @@ export const ClaimRequestForm: React.FC = () => {
               Item #{selectedItem.id}
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-              In Storage: {selectedItem.storageBoxId} • {selectedItem.storageSlotId}
+              LGU office verification required
             </span>
           </div>
           <h3 className="text-sm sm:text-base font-bold text-stone-900 truncate mt-0.5">
@@ -127,7 +126,7 @@ export const ClaimRequestForm: React.FC = () => {
         <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
         <div>
           <span className="font-bold">Ownership Verification Notice: </span>
-          Submitting a claim does not guarantee approval. Authorized municipal officers must verify ownership details against the stored physical item before issuing a locker release code.
+          Submitting a claim does not guarantee approval. Authorized LGU staff must verify ownership details manually at the LGU office before handover.
         </div>
       </div>
 
@@ -215,7 +214,7 @@ export const ClaimRequestForm: React.FC = () => {
                 className="w-full rounded-2xl border border-stone-200 p-3.5 text-xs text-stone-800 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden leading-relaxed bg-stone-50/50"
               />
               <p className="text-[11px] text-stone-500 mt-1">
-                LGU officers will check these details against the physical item in storage before approving.
+                LGU officers will check these details against the finder/private record and the physical item before approving.
               </p>
             </div>
 

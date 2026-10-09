@@ -6,7 +6,7 @@ import {
   FileText, 
   ShieldCheck, 
   ArrowRight, 
-  HardDrive, 
+  MapPin, 
   Info,
   ChevronRight
 } from "lucide-react";
@@ -36,7 +36,7 @@ export const StudentHome: React.FC = () => {
           </h1>
 
           <p className="text-stone-300 text-sm sm:text-base leading-relaxed">
-            Describe what you misplaced in plain words or with your voice. Our intelligent system matches your description with surrendered items stored securely in municipal smart storage lockers.
+            Describe what you misplaced in plain words or with your voice. BalikHub ranks approved finder posts and routes verified handovers through the LGU office.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -52,7 +52,7 @@ export const StudentHome: React.FC = () => {
               className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-stone-100 font-semibold text-sm rounded-xl backdrop-blur-xs border border-white/20 transition-all flex items-center space-x-2"
             >
               <Search className="w-4 h-4 text-stone-300" />
-              <span>Search Storage Inventory</span>
+              <span>Search Found Posts</span>
             </button>
           </div>
         </div>
@@ -74,7 +74,7 @@ export const StudentHome: React.FC = () => {
                 Report a Lost Item
               </h3>
               <p className="text-stone-600 text-sm mt-1.5 leading-relaxed">
-                Provide a quick voice or text description. The AI engine extracts item attributes (brand, color, accessories) to pinpoint candidates in inventory.
+                Provide a quick voice or text description. The matcher accepts English, Filipino, and Taglish, including common misspellings.
               </p>
             </div>
           </div>
@@ -98,7 +98,7 @@ export const StudentHome: React.FC = () => {
                 Search Found Item Catalog
               </h3>
               <p className="text-stone-600 text-sm mt-1.5 leading-relaxed">
-                Browse surrendered items currently held in secure municipal smart lockers across city facilities. Filter by category, location found, and date.
+                Browse approved public found-item posts. Filter by category, location found, and date.
               </p>
             </div>
           </div>
@@ -112,9 +112,9 @@ export const StudentHome: React.FC = () => {
       {/* 4-Step Process Guide */}
       <div className="bg-stone-100/80 border border-stone-200/80 rounded-3xl p-6 sm:p-8">
         <div className="max-w-xl mb-6">
-          <h3 className="text-lg font-bold text-stone-900">How the Smart Lost & Found Works</h3>
+          <h3 className="text-lg font-bold text-stone-900">How BalikHub Works</h3>
           <p className="text-xs sm:text-sm text-stone-600 mt-1">
-            A transparent 4-stage pipeline combining artificial intelligence with LGU desk verification and secure IoT lockers.
+            A transparent 4-stage flow combining lexical matching with LGU desk verification and office handover.
           </p>
         </div>
 
@@ -125,7 +125,7 @@ export const StudentHome: React.FC = () => {
             </div>
             <h4 className="text-sm font-bold text-stone-900">Describe Your Item</h4>
             <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-              Use voice or text. Mention brand, color, unique marks, or serial numbers.
+              Use voice or text. Mention public clues like item type, color, date, and area found.
             </p>
           </div>
 
@@ -133,9 +133,9 @@ export const StudentHome: React.FC = () => {
             <div className="w-7 h-7 rounded-lg bg-stone-100 text-stone-800 font-bold text-xs flex items-center justify-center mb-3">
               2
             </div>
-            <h4 className="text-sm font-bold text-stone-900">AI Matches Candidates</h4>
+            <h4 className="text-sm font-bold text-stone-900">System Ranks Candidates</h4>
             <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-              NLP extracts key attributes and ranks matching items by similarity confidence.
+              TF-IDF ranks approved public posts without showing scores to claimants.
             </p>
           </div>
 
@@ -153,9 +153,9 @@ export const StudentHome: React.FC = () => {
             <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center mb-3">
               4
             </div>
-            <h4 className="text-sm font-bold text-stone-900">Retrieve from Locker</h4>
+            <h4 className="text-sm font-bold text-stone-900">Handover at LGU Office</h4>
             <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-              Scan your Citizen QR / ID at the smart storage unit to unlock your compartment.
+              Meet the finder at the LGU office after staff verifies ownership and identity.
             </p>
           </div>
         </div>
@@ -213,7 +213,7 @@ export const StudentHome: React.FC = () => {
 
               <div className="flex items-center space-x-2 text-xs text-stone-500 px-1">
                 <Info className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                <span>AI NLP is actively monitoring new inventory surrendered to municipal LGU desks.</span>
+                <span>BalikHub is monitoring newly approved found-item posts.</span>
               </div>
             </div>
           ) : (
@@ -274,8 +274,8 @@ export const StudentHome: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-4 border-t border-stone-100 text-[11px] text-stone-500 flex items-center space-x-1.5">
-            <HardDrive className="w-3.5 h-3.5 text-emerald-800" />
-            <span>Municipal Smart Lockers: Ready for Citizen ID Verification</span>
+            <MapPin className="w-3.5 h-3.5 text-emerald-800" />
+            <span>Verified handovers happen at the San Pablo City LGU office.</span>
           </div>
         </div>
       </div>

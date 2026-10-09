@@ -38,7 +38,7 @@ function ruleBasedExtract(description: string) {
     "Water Bottle": ["hydro flask", "water bottle", "flask", "tumbler", "yeti", "thermos", "stanley"],
     "Electronics": ["airpods", "earbuds", "headphones", "phone", "iphone", "ipad", "tablet", "laptop", "macbook", "charger", "calculator", "ti-84", "casio"],
     "Apparel": ["jacket", "hoodie", "sweater", "coat", "hat", "cap", "scarf", "gloves", "glasses", "sunglasses"],
-    "Keys & Cards": ["keys", "keychain", "id card", "student id", "badge", "wallet", "purse", "lanyard"],
+    "Keys & Cards": ["keys", "keychain", "id card", "badge", "wallet", "purse", "lanyard"],
     "Stationery / Books": ["notebook", "binder", "textbook", "pencil case", "folder", "book", "planner"]
   };
 
@@ -81,7 +81,7 @@ function ruleBasedExtract(description: string) {
   if (text.includes("scratch") || text.includes("dent") || text.includes("initials")) accessories.push("Distinguishing mark / wear");
 
   // Location detection
-  const locations = ["library", "cafeteria", "gym", "auditorium", "room 204", "science lab", "hallway", "bleachers", "field", "computer lab", "bus stop", "locker room", "parking lot", "quad"];
+  const locations = ["library", "city hall", "plaza", "terminal", "lgu office", "public market", "barangay hall", "park"];
   let locationHint = "";
   for (const loc of locations) {
     if (text.includes(loc)) {
@@ -96,7 +96,7 @@ function ruleBasedExtract(description: string) {
     brand: foundBrand || "Unbranded / Unknown",
     accessories: accessories.length > 0 ? accessories.join(", ") : "None mentioned",
     distinguishingFeatures: text.length > 20 ? description : "Standard model without unique serial marks mentioned",
-    locationHint: locationHint || "Unknown campus area",
+    locationHint: locationHint || "San Pablo City area",
     confidence: "High (Pattern Extracted)",
     tags: [itemType, ...(foundColors), foundBrand, ...accessories].filter(Boolean)
   };
@@ -165,7 +165,7 @@ app.post("/api/nlp/match-analyze", async (req, res) => {
     confidence: "Medium",
     matchedAttributes: ["Fallback match calculation used"],
     discrepancies: ["Python TF-IDF server unreachable"],
-    aiSummary: "The TF-IDF server could not be reached. Physical verification required."
+    aiSummary: "The TF-IDF server could not be reached. LGU office verification is required."
   });
 });
 
@@ -186,7 +186,7 @@ async function setupApp() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Smart Lost & Found Server running on port ${PORT}`);
+    console.log(`BalikHub Lost & Found Server running on port ${PORT}`);
   });
 }
 

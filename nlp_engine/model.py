@@ -2,8 +2,9 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from scipy.sparse import hstack
 import re
+import math
 
 # Download required NLTK data for lemmatization and stop-words
 import os
@@ -19,19 +20,38 @@ class BalikHubNLPModel:
     def __init__(self):
         self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
-        # Add domain-specific stop words to filter out noise
-        self.stop_words.update(["lost", "found", "missing"])
-        
-        # TF-IDF Vectorizer matching the paper's specifications:
-        # - unigrams and bigrams
-        # - L2 normalization
-        # - minimum and maximum document frequency thresholds
-        self.vectorizer = TfidfVectorizer(
+        self.stop_words.update({
+            "ang", "ng", "sa", "na", "ko", "ako", "ay", "mga", "po", "opo",
+            "yung", "yun", "ito", "iyon", "ni", "kay", "nasa", "mo",
+            "lost", "found", "missing", "nawala", "nakita"
+        })
+
+        self.lexicon = {
+            "pitaka": "wallet", "susi": "key", "payong": "umbrella",
+            "relo": "watch", "orasan": "watch", "salamin": "eyeglasses",
+            "sapatos": "shoes", "tsinelas": "slippers", "selpon": "phone",
+            "cellphone": "phone", "cp": "phone", "itim": "black",
+            "puti": "white", "pula": "red", "asul": "blue", "berde": "green",
+            "dilaw": "yellow", "kayumanggi": "brown", "abo": "gray",
+            "balat": "leather", "plastik": "plastic", "tela": "cloth",
+            "blk": "black", "wht": "white"
+        }
+        self.keep_mixed_alphanumeric_tokens = True
+
+        self.word_vectorizer = TfidfVectorizer(
+            analyzer="word",
             ngram_range=(1, 2),
             min_df=1,
             max_df=0.95,
             norm='l2',
-            stop_words=None # Stop words handled in preprocess
+            stop_words=None
+        )
+        self.char_vectorizer = TfidfVectorizer(
+            analyzer="char_wb",
+            ngram_range=(3, 5),
+            min_df=1,
+            norm='l2',
+            stop_words=None
         )
         
         self.database_vectors = None
@@ -39,33 +59,66 @@ class BalikHubNLPModel:
         self.database_records = []
         self.is_trained = False
         
-        # Empirically derived cosine similarity threshold (as per paper Chapter 3/4)
-        self.confidence_threshold = 0.45 
+        self.alpha = 0.6
+        self.confidence_threshold = 0.35
+
+    def _edit_distance_at_most_one(self, left: str, right: str) -> bool:
+        if abs(len(left) - len(right)) > 1:
+            return False
+        if left == right:
+            return True
+        previous = list(range(len(right) + 1))
+        for i, left_char in enumerate(left, start=1):
+            current = [i]
+            row_min = i
+            for j, right_char in enumerate(right, start=1):
+                insertions = previous[j] + 1
+                deletions = current[j - 1] + 1
+                substitutions = previous[j - 1] + (left_char != right_char)
+                value = min(insertions, deletions, substitutions)
+                current.append(value)
+                row_min = min(row_min, value)
+            if row_min > 1:
+                return False
+            previous = current
+        return previous[-1] <= 1
+
+    def _normalize_lexicon_token(self, token: str) -> str:
+        if token in self.lexicon:
+            return self.lexicon[token]
+        for surface, canonical in self.lexicon.items():
+            if len(surface) >= 5 and self._edit_distance_at_most_one(token, surface):
+                return canonical
+        return token
 
     def preprocess_text(self, text: str) -> str:
         """
-        Executes the exact NLP preprocessing pipeline: 
-        case folding -> punctuation removal -> tokenization -> stop-word removal -> lemmatization.
+        Language-agnostic preprocessing for English, Filipino, and Taglish.
         """
         if not isinstance(text, str):
             return ""
-        
-        # 1. Case folding
+
         text = text.lower()
-        
-        # 2. Punctuation removal
-        text = re.sub(r'[^\w\s]', '', text)
-        
-        # 3. Tokenization
+        text = re.sub(r'(.)\1{2,}', r'\1\1', text)
+        text = re.sub(r'[\U00010000-\U0010ffff]', ' ', text)
+        text = re.sub(r'[^a-z0-9\s]', ' ', text)
         tokens = text.split()
-        
-        # 4. Stop-word removal and 5. Lemmatization
-        clean_tokens = [
-            self.lemmatizer.lemmatize(word) 
-            for word in tokens 
-            if word not in self.stop_words
-        ]
-        
+
+        clean_tokens = []
+        for token in tokens:
+            if token.isdigit():
+                continue
+            if (
+                not self.keep_mixed_alphanumeric_tokens
+                and any(ch.isalpha() for ch in token)
+                and any(ch.isdigit() for ch in token)
+            ):
+                continue
+            token = self._normalize_lexicon_token(token)
+            if token in self.stop_words:
+                continue
+            clean_tokens.append(self.lemmatizer.lemmatize(token))
+
         return " ".join(clean_tokens)
 
     def train(self, documents: list, ids: list, records: list) -> bool:
@@ -77,7 +130,12 @@ class BalikHubNLPModel:
         if not cleaned_docs:
             return False
             
-        self.database_vectors = self.vectorizer.fit_transform(cleaned_docs)
+        word_vectors = self.word_vectorizer.fit_transform(cleaned_docs)
+        char_vectors = self.char_vectorizer.fit_transform(cleaned_docs)
+        self.database_vectors = hstack([
+            math.sqrt(self.alpha) * word_vectors,
+            math.sqrt(1 - self.alpha) * char_vectors
+        ]).tocsr()
         self.database_ids = ids
         self.database_records = records
         self.is_trained = True
@@ -101,8 +159,8 @@ class BalikHubNLPModel:
         found_brand = next((b.capitalize() for b in brands if b in text_lower), "Unbranded / Unknown")
         
         # Location hints
-        locations = ["library", "cafeteria", "gym", "hallway", "lab", "classroom"]
-        found_loc = next((l.capitalize() for l in locations if l in text_lower), "Unknown campus area")
+        locations = ["library", "city hall", "plaza", "terminal", "lgu office", "market", "barangay"]
+        found_loc = next((l.capitalize() for l in locations if l in text_lower), "San Pablo City")
         
         return {
             "itemType": found_type,
@@ -116,16 +174,20 @@ class BalikHubNLPModel:
 
     def predict_matches(self, query: str) -> list:
         """
-        Executes the highly-optimized O(N x k) Cosine Similarity calculation across the sparse matrix.
+        Ranks available posts with one sparse dot product over the hybrid TF-IDF matrix.
         """
         if not self.is_trained or self.database_vectors is None:
             return []
 
         cleaned_query = self.preprocess_text(query)
-        query_vector = self.vectorizer.transform([cleaned_query])
-        
-        # Compute dot product against L2-normalized CSR matrix
-        similarities = cosine_similarity(query_vector, self.database_vectors).flatten()
+        query_word = self.word_vectorizer.transform([cleaned_query])
+        query_char = self.char_vectorizer.transform([cleaned_query])
+        query_vector = hstack([
+            math.sqrt(self.alpha) * query_word,
+            math.sqrt(1 - self.alpha) * query_char
+        ]).tocsr()
+
+        similarities = (query_vector @ self.database_vectors.T).toarray().flatten()
         
         results = []
         # Rank the candidates

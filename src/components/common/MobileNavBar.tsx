@@ -9,8 +9,7 @@ import {
   LayoutDashboard, 
   Package, 
   ShieldCheck, 
-  HardDrive, 
-  QrCode,
+  MapPin,
   Bell
 } from "lucide-react";
 
@@ -25,9 +24,7 @@ export const MobileNavBar: React.FC = () => {
     lostReports,
     notifications,
     setIsNotifDrawerOpen,
-    setIsRegisterModalOpen,
-    setIsScannerModalOpen,
-    screenMode
+    setIsRegisterModalOpen
   } = useApp();
 
   const unreadCount = notifications.filter(n => !n.read && (n.recipientRole === role || n.recipientRole === "all")).length;
@@ -145,16 +142,16 @@ export const MobileNavBar: React.FC = () => {
             <span className="text-[10px] mt-0.5 tracking-tight">Inventory</span>
           </button>
 
-          {/* 3. Center Action: Quick Scanner or Intake */}
+          {/* 3. Center Action: Intake */}
           <button
-            onClick={() => setIsScannerModalOpen(true)}
+            onClick={() => setIsRegisterModalOpen(true)}
             className="flex flex-col items-center justify-center -mt-4 group"
           >
             <div className="w-11 h-11 rounded-full bg-amber-600 text-white flex items-center justify-center shadow-md hover:bg-amber-700 transition-transform group-active:scale-95 ring-2 ring-amber-400">
-              <QrCode className="w-6 h-6" />
+              <PlusCircle className="w-6 h-6" />
             </div>
             <span className="text-[10px] mt-0.5 font-bold text-amber-900">
-              Scan Pass
+              Intake
             </span>
           </button>
 
@@ -176,17 +173,17 @@ export const MobileNavBar: React.FC = () => {
             )}
           </button>
 
-          {/* 5. Smart Lockers */}
+          {/* 5. LGU Handover */}
           <button
-            onClick={() => setStaffView("storage_box")}
+            onClick={() => setStaffView("claim_requests")}
             className={`flex flex-col items-center justify-center py-1 rounded-xl transition-colors ${
-              staffView === "storage_box"
+              staffView === "claim_requests"
                 ? "text-emerald-800 font-bold"
                 : "text-stone-500 hover:text-stone-800"
             }`}
           >
-            <HardDrive className={`w-5 h-5 ${staffView === "storage_box" ? "stroke-[2.5]" : "stroke-2"}`} />
-            <span className="text-[10px] mt-0.5 tracking-tight">Lockers</span>
+            <MapPin className={`w-5 h-5 ${staffView === "claim_requests" ? "stroke-[2.5]" : "stroke-2"}`} />
+            <span className="text-[10px] mt-0.5 tracking-tight">Handover</span>
           </button>
         </nav>
       )}

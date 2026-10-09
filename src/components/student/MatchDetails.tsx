@@ -2,26 +2,18 @@ import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
 import { 
   ArrowLeft, 
-  Sparkles, 
   ShieldCheck, 
-  MapPin, 
-  Calendar, 
-  HardDrive, 
   CheckCircle2, 
-  AlertCircle, 
-  HelpCircle,
   FileText,
-  User,
   ArrowRight,
-  X
+  MapPin
 } from "lucide-react";
 
 export const MatchDetails: React.FC = () => {
   const { 
     selectedItem, 
     lastSubmittedReport, 
-    setStudentView, 
-    activeMatchResults 
+    setStudentView
   } = useApp();
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -39,10 +31,6 @@ export const MatchDetails: React.FC = () => {
       </div>
     );
   }
-
-  // Find match result metadata if available
-  const matchResult = activeMatchResults.find(m => m.item.id === selectedItem.id);
-  const similarityScore = matchResult ? matchResult.similarityScore : 92;
 
   const userDesc = lastSubmittedReport?.rawDescription || "Black Jansport backpack with blue keychain attached to the front pocket.";
   const userAttributes = lastSubmittedReport?.extractedAttributes;
@@ -71,7 +59,7 @@ export const MatchDetails: React.FC = () => {
 
       {/* Main Grid: Left Column Large Photo & Quick Specs, Right Column Comparison & Action */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column (5 Cols): Image & Storage Location */}
+        {/* Left Column (5 Cols): Image & Public Details */}
         <div className="lg:col-span-5 space-y-4">
           <div className="relative rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-sm aspect-square">
             <img
@@ -81,24 +69,17 @@ export const MatchDetails: React.FC = () => {
               className="w-full h-full object-cover"
             />
 
-            <div className="absolute top-4 left-4">
-              <div className="px-3.5 py-1.5 rounded-full bg-emerald-800 text-white text-xs font-extrabold shadow-md flex items-center space-x-1.5 backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>{similarityScore}% AI Match Score</span>
-              </div>
-            </div>
-
             <div className="absolute bottom-4 left-4 right-4">
               <div className="p-3 rounded-xl bg-stone-900/85 backdrop-blur-md text-white border border-white/10 text-xs flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <HardDrive className="w-4 h-4 text-emerald-400" />
+                  <MapPin className="w-4 h-4 text-emerald-400" />
                   <div>
-                    <p className="font-bold text-[11px]">{selectedItem.storageBoxId}</p>
-                    <p className="text-[10px] text-stone-300">Compartment Slot {selectedItem.storageSlotId}</p>
+                    <p className="font-bold text-[11px]">Found in San Pablo City</p>
+                    <p className="text-[10px] text-stone-300">{selectedItem.foundLocation}</p>
                   </div>
                 </div>
                 <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
-                  SECURE LOCK
+                  PUBLIC POST
                 </span>
               </div>
             </div>
@@ -173,8 +154,8 @@ export const MatchDetails: React.FC = () => {
               {/* Right Box: Found Item Record */}
               <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-2">
                 <div className="flex items-center space-x-1.5 text-xs font-bold text-stone-900">
-                  <HardDrive className="w-3.5 h-3.5 text-stone-600" />
-                  <span>Found Item in Storage</span>
+                  <MapPin className="w-3.5 h-3.5 text-stone-600" />
+                  <span>Found Item Public Post</span>
                 </div>
                 <p className="text-xs text-stone-700 leading-relaxed">
                   {selectedItem.description}
@@ -183,7 +164,7 @@ export const MatchDetails: React.FC = () => {
                   <p><span className="font-semibold text-stone-900">Type:</span> {selectedItem.itemType}</p>
                   <p><span className="font-semibold text-stone-900">Color:</span> {selectedItem.color}</p>
                   <p><span className="font-semibold text-stone-900">Brand:</span> {selectedItem.brand}</p>
-                  <p><span className="font-semibold text-stone-900">Unique Marks:</span> {selectedItem.identifyingCharacteristics}</p>
+                  <p><span className="font-semibold text-stone-900">Found Area:</span> {selectedItem.foundLocation}</p>
                 </div>
               </div>
             </div>
@@ -191,7 +172,7 @@ export const MatchDetails: React.FC = () => {
             {/* Confirmed Overlap Checklist */}
             <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2">
               <span className="text-xs font-bold text-emerald-900 block">
-                NLP Identified Similarity Vectors
+                Public Similarity Clues
               </span>
               <ul className="space-y-1.5 text-xs text-emerald-800">
                 <li className="flex items-center space-x-2">
@@ -204,7 +185,7 @@ export const MatchDetails: React.FC = () => {
                 </li>
                 <li className="flex items-center space-x-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
-                  <span><strong>Identifying marks & accessories:</strong> {selectedItem.identifyingCharacteristics}</span>
+                  <span><strong>Public description:</strong> {selectedItem.description}</span>
                 </li>
               </ul>
             </div>
@@ -215,7 +196,7 @@ export const MatchDetails: React.FC = () => {
             <ShieldCheck className="w-5 h-5 text-emerald-800 shrink-0 mt-0.5" />
             <div>
               <span className="font-bold text-stone-900">Next Step: </span>
-              If this matches your lost item, submit a retrieval claim. You will be asked to provide identifying proof (such as inside contents, marks, or serial digits) so LGU officers can verify before unlocking the storage locker.
+              If this matches your lost item, submit a claim request. You will be asked to provide identifying proof during LGU verification, without receiving hints from private finder details.
             </div>
           </div>
 
@@ -245,13 +226,13 @@ export const MatchDetails: React.FC = () => {
                 Ready to Request Verification?
               </h3>
               <p className="text-xs text-stone-500 leading-relaxed">
-                Submitting a claim initiates municipal officer ownership verification for <strong>{selectedItem.title} (#{selectedItem.id})</strong>. The item is held securely in <strong>{selectedItem.storageBoxId} Slot {selectedItem.storageSlotId}</strong>.
+                Submitting a claim initiates municipal officer ownership verification for <strong>{selectedItem.title} (#{selectedItem.id})</strong>. Handover can happen only at the LGU office after staff approval.
               </p>
             </div>
 
             <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 leading-relaxed">
               <span className="font-bold">Reminder: </span>
-              AI similarity does not guarantee release. You must present your citizen ID or QR verification code upon retrieval.
+              The ranking is advisory, not proof of ownership. Bring a valid ID and be ready to answer staff questions without hints.
             </div>
 
             <div className="flex items-center space-x-3 pt-2">

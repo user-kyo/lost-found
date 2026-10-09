@@ -5,20 +5,15 @@ import {
   CheckCircle2, 
   Clock, 
   ShieldCheck, 
-  QrCode, 
   MapPin, 
-  HardDrive, 
   AlertCircle, 
   XCircle, 
   UserCheck, 
-  Key,
-  Copy,
-  Check
+  Key
 } from "lucide-react";
 
 export const ClaimStatusTracker: React.FC = () => {
   const { selectedClaim, foundItems, setStudentView, setRole, setStaffView, setIsVerifyModalOpen } = useApp();
-  const [copied, setCopied] = React.useState(false);
 
   if (!selectedClaim) {
     return (
@@ -41,8 +36,8 @@ export const ClaimStatusTracker: React.FC = () => {
     { key: "review", label: "Under LGU Review", desc: "Desk officers inspecting proofs" },
     { key: "identity", label: "Identity Verified", desc: "Claimant credentials matched" },
     { key: "approved", label: "Claim Approved", desc: "Ownership confirmed" },
-    { key: "retrieval", label: "Ready for Retrieval", desc: "Storage locker assigned" },
-    { key: "released", label: "Item Released", desc: "Door unlocked & retrieved" }
+    { key: "retrieval", label: "Ready for Handover", desc: "Meet at LGU office" },
+    { key: "released", label: "Returned", desc: "Handover logged by staff" }
   ];
 
   const getStepStatus = (stepIndex: number) => {
@@ -66,14 +61,6 @@ export const ClaimStatusTracker: React.FC = () => {
     if (stepIndex < currentIndex) return "completed";
     if (stepIndex === currentIndex) return "active";
     return "upcoming";
-  };
-
-  const handleCopyCode = () => {
-    if (selectedClaim.retrievalCode) {
-      navigator.clipboard?.writeText(selectedClaim.retrievalCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
   };
 
   return (
@@ -143,7 +130,7 @@ export const ClaimStatusTracker: React.FC = () => {
 
         {/* 6-Stage Timeline */}
         <div className="space-y-4">
-          <h3 className="text-sm font-bold text-stone-900">Retrieval Progress Tracker</h3>
+          <h3 className="text-sm font-bold text-stone-900">Claim Progress Tracker</h3>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
             {TIMELINE_STEPS.map((step, idx) => {
@@ -191,7 +178,7 @@ export const ClaimStatusTracker: React.FC = () => {
           </div>
         </div>
 
-        {/* Ready for Retrieval Pass (if Approved or Ready) */}
+        {/* Ready for LGU Handover */}
         {(selectedClaim.status === "ready_for_retrieval" || selectedClaim.status === "approved") && (
           <div className="p-4 sm:p-6 rounded-3xl bg-linear-to-br from-stone-900 via-stone-850 to-emerald-950 text-white shadow-xl space-y-4 border border-stone-800">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
@@ -200,48 +187,38 @@ export const ClaimStatusTracker: React.FC = () => {
                   <Key className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm sm:text-base font-extrabold text-white truncate">Smart Storage Retrieval Pass</h3>
+                  <h3 className="text-sm sm:text-base font-extrabold text-white truncate">LGU Office Handover Notice</h3>
                   <p className="text-xs text-stone-300 truncate">
-                    Present this pass at the locker kiosk.
+                    Bring a valid ID and meet the finder in front of LGU staff.
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between sm:justify-start space-x-2 bg-white/10 px-3 py-1.5 rounded-xl backdrop-blur-md border border-white/10">
-                <span className="text-xs text-stone-300">Locker Code:</span>
-                <span className="font-mono text-xs sm:text-sm font-bold text-amber-300 tracking-wider">
-                  {selectedClaim.retrievalCode || "LF-RET-9412"}
-                </span>
-                <button
-                  onClick={handleCopyCode}
-                  className="p-1 hover:text-amber-300 transition-colors"
-                  title="Copy code"
-                >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                </button>
-              </div>
+              <span className="bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 text-xs text-amber-200 font-bold">
+                LGU staff approval required
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-2">
               <div className="bg-white/5 p-3 rounded-xl border border-white/10">
                 <span className="text-stone-300 text-[10px] uppercase font-bold block mb-1">
-                  1. Location
+                  1. Venue
                 </span>
-                <p className="font-semibold text-white break-words">{item?.storageBoxId === "BOX-A" ? "Locker Box A (Main Admin Lobby)" : "Locker Box B (Athletics Concourse)"}</p>
+                <p className="font-semibold text-white break-words">San Pablo City LGU Office</p>
               </div>
 
               <div className="bg-white/5 p-3 rounded-xl border border-white/10">
                 <span className="text-stone-300 text-[10px] uppercase font-bold block mb-1">
-                  2. Assigned Compartment
+                  2. Bring
                 </span>
-                <p className="font-bold text-amber-300 text-sm">Slot #{item?.storageSlotId || "B3"}</p>
+                <p className="font-bold text-amber-300 text-sm">Valid ID</p>
               </div>
 
               <div className="bg-white/5 p-3 rounded-xl border border-white/10">
                 <span className="text-stone-300 text-[10px] uppercase font-bold block mb-1">
-                  3. Unlock Method
+                  3. Process
                 </span>
-                <p className="font-semibold text-white">Tap Citizen RFID / Scan QR</p>
+                <p className="font-semibold text-white">Staff interview and handover log</p>
               </div>
             </div>
           </div>

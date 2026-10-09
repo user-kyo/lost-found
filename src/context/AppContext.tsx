@@ -233,7 +233,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       role: "LGU Desk Officer",
       action: "ITEM_REGISTERED",
       itemId: id,
-      details: `Cataloged ${newItem.title}. Stored in Locker ${itemData.storageBoxId} Slot ${itemData.storageSlotId}.`,
+      details: `Cataloged ${newItem.title}. Awaiting LGU review before publication.`,
       device: "LGU Intake Station",
       result: "Success"
     });
@@ -357,8 +357,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
 
     addNotification({
-      title: "Claim Approved — Ready for Locker Retrieval",
-      message: `Your claim has been verified! Present your Citizen ID card or scan QR at the smart locker unit. Code: ${retrievalCode}`,
+      title: "Claim Approved — LGU Handover Required",
+      message: "Your claim has been verified. Bring a valid ID and meet the finder at the LGU office for staff-supervised handover.",
       type: "claim_update",
       recipientRole: "student",
       relatedClaimId: claimId
@@ -493,8 +493,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       action: "ITEM_RELEASED",
       itemId: item.id,
       claimId: claim.id,
-      details: `RFID / Citizen ID Verified for ${claim.claimantName} (${claim.claimantId}). Locker ${item.storageBoxId} Slot ${item.storageSlotId} unlocked and item released.`,
-      device: "LGU Smart Locker Kiosk Unit",
+      details: `LGU staff verified ${claim.claimantName} (${claim.claimantId}) and logged the office handover for ${item.title}.`,
+      device: "LGU Admin Console",
       result: "Success"
     });
 
