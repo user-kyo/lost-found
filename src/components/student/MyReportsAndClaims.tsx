@@ -361,6 +361,32 @@ export const MyReportsAndClaims: React.FC<Props> = ({ initialTab = "reports" }) 
                       </ul>
                     </div>
                   )}
+
+                  {item.claims && item.claims.length > 0 && (
+                    <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-100 mt-2">
+                       <h5 className="text-[10px] font-bold text-indigo-700 uppercase tracking-wider mb-2">Claim Requests on this Item</h5>
+                       <div className="space-y-2">
+                          {item.claims.map((claim: any) => (
+                            <div key={claim.id} className="flex flex-wrap justify-between items-center bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs gap-2">
+                               <div className="flex flex-col">
+                                 <span className="text-[10px] font-mono text-indigo-400">Claim #{claim.id.slice(-6)}</span>
+                                 <span className="text-xs font-bold text-indigo-900 capitalize">{claim.status.replace(/_/g, " ")}</span>
+                               </div>
+                               <button 
+                                 onClick={() => { 
+                                   setSelectedClaim(claim); 
+                                   setStudentView("claim_tracking"); 
+                                 }} 
+                                 className="text-xs bg-indigo-600 hover:bg-indigo-700 transition-colors text-white px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1"
+                               >
+                                 <span>View Claim & Chat</span>
+                                 <ChevronRight className="w-3.5 h-3.5" />
+                               </button>
+                            </div>
+                          ))}
+                       </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))

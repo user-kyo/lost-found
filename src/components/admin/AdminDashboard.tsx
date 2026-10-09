@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
-import { ShieldCheck, AlertCircle, Check, X, ShieldAlert } from "lucide-react";
+import { ShieldCheck, AlertCircle, Check, X, ShieldAlert, RefreshCw } from "lucide-react";
 
 export const AdminDashboard: React.FC = () => {
   const { user } = useApp();
@@ -25,6 +25,13 @@ export const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchQueue();
+    
+    // Auto-poll every 10 seconds to catch new items reported by citizens
+    const interval = setInterval(() => {
+      fetchQueue();
+    }, 10000);
+    
+    return () => clearInterval(interval);
   }, [user?.token]);
 
   const handleAction = async (postId: string, action: "approve" | "reject") => {
@@ -66,6 +73,14 @@ export const AdminDashboard: React.FC = () => {
             Review newly submitted found items. Check for sensitive details before approving to public search.
           </p>
         </div>
+        <button
+          onClick={fetchQueue}
+          disabled={loading}
+          className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-sm font-bold flex items-center space-x-2 transition-colors border border-stone-200 active:scale-95 disabled:opacity-50"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+          <span>Refresh Queue</span>
+        </button>
       </div>
 
       {loading ? (

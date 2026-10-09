@@ -130,6 +130,16 @@ export const Header: React.FC = () => {
                     LGU Review Queue
                   </button>
                   <button
+                    onClick={() => setStaffView("found_items")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                      staffView === "found_items"
+                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
+                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
+                    }`}
+                  >
+                    Active Inventory
+                  </button>
+                  <button
                     onClick={() => setStaffView("claims")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                       staffView === "claims" || staffView === "claim_requests"
@@ -173,10 +183,34 @@ export const Header: React.FC = () => {
               )}
             </button>
 
+            {/* Custom Language Toggle */}
+            <div className="flex items-center space-x-1 mr-2 bg-stone-100 rounded-lg p-0.5 border border-stone-200">
+              <button
+                onClick={() => {
+                  document.cookie = "googtrans=/en/en; path=/";
+                  document.cookie = "googtrans=/en/en; domain=" + window.location.hostname + "; path=/";
+                  window.location.reload();
+                }}
+                className={`px-2 py-1 text-[10px] font-bold rounded-md ${document.cookie.includes('/en/tl') ? 'text-stone-500 hover:bg-stone-200' : 'bg-white shadow-xs text-emerald-800'}`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => {
+                  document.cookie = "googtrans=/en/tl; path=/";
+                  document.cookie = "googtrans=/en/tl; domain=" + window.location.hostname + "; path=/";
+                  window.location.reload();
+                }}
+                className={`px-2 py-1 text-[10px] font-bold rounded-md ${document.cookie.includes('/en/tl') ? 'bg-white shadow-xs text-emerald-800' : 'text-stone-500 hover:bg-stone-200'}`}
+              >
+                TL
+              </button>
+            </div>
+
             {/* Logout Button */}
             <button
               onClick={() => logout()}
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-[11px] sm:text-xs font-semibold transition-all border border-stone-200"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-[11px] sm:text-xs font-semibold transition-all border border-stone-200 shrink-0"
               title="Sign Out"
             >
               <User className="w-3.5 h-3.5" />
@@ -225,6 +259,14 @@ export const Header: React.FC = () => {
                   }`}
                 >
                   LGU Review Queue
+                </button>
+                <button
+                  onClick={() => setStaffView("found_items")}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
+                    staffView === "found_items" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
+                  }`}
+                >
+                  Active Inventory
                 </button>
                 <button
                   onClick={() => setStaffView("claims")}

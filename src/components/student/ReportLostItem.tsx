@@ -37,11 +37,11 @@ export const ReportLostItem: React.FC = () => {
   } = useApp();
 
   const [description, setDescription] = useState("");
-  const [studentName, setStudentName] = useState("Maya Lin");
-  const [studentId, setStudentId] = useState("CTZ-2026-8941");
-  const [contactEmail, setContactEmail] = useState("maya.lin@civicnet.gov");
-  const [contactPhone, setContactPhone] = useState("(555) 234-8901");
-  const [estimatedLocation, setEstimatedLocation] = useState("City Public Library - 2nd Floor");
+  const [studentName, setStudentName] = useState("");
+  const [studentId, setStudentId] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [estimatedLocation, setEstimatedLocation] = useState("");
   const [lostDate, setLostDate] = useState(new Date().toISOString().split("T")[0]);
 
   // Voice recording state

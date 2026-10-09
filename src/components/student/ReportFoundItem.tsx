@@ -5,7 +5,7 @@ import { PlusCircle, Loader2 } from "lucide-react";
 export const ReportFoundItem: React.FC = () => {
   const { user, setStudentView } = useApp();
 
-  const [category, setCategory] = useState("Electronics");
+  const [category, setCategory] = useState("");
   const [color, setColor] = useState("");
   const [publicDescription, setPublicDescription] = useState("");
   const [dateFound, setDateFound] = useState(new Date().toISOString().split("T")[0]);
@@ -88,14 +88,7 @@ export const ReportFoundItem: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-bold text-stone-700 mb-2">Category</label>
-              <select required value={category} onChange={e => setCategory(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 bg-stone-50/50">
-                <option value="Electronics">Electronics</option>
-                <option value="Bags & Wallets">Bags & Wallets</option>
-                <option value="Keys">Keys</option>
-                <option value="Documents/IDs">Documents/IDs</option>
-                <option value="Clothing">Clothing</option>
-                <option value="Other">Other</option>
-              </select>
+              <input required type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Electronics, Keys, Clothing" className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 bg-stone-50/50" />
             </div>
 
             <div>

@@ -14,7 +14,7 @@ import {
 import { ChatWidget } from "../common/ChatWidget";
 
 export const ClaimStatusTracker: React.FC = () => {
-  const { selectedClaim, foundItems, setStudentView, setRole, setStaffView, setIsVerifyModalOpen } = useApp();
+  const { selectedClaim, foundItems, setStudentView, setRole, setStaffView, setIsVerifyModalOpen, user } = useApp();
 
   if (!selectedClaim) {
     return (
@@ -235,12 +235,17 @@ export const ClaimStatusTracker: React.FC = () => {
             <button 
               onClick={async () => {
                 if(confirm("Are you sure you want to mark this item as successfully returned externally? This will close the claim.")) {
-                  await fetch(`/api/claims/${selectedClaim.id}/complete-external`, {
+                  const res = await fetch(`/api/claims/${selectedClaim.id}/complete-external`, {
                     method: "POST",
-                    headers: { "Authorization": `Bearer ${(useApp as any)().user?.token}` }
+                    headers: { "Authorization": `Bearer ${user?.token}` }
                   });
-                  alert("Claim marked as returned!");
-                  window.location.reload();
+                  
+                  if (res.ok) {
+                    alert("Claim marked as returned!");
+                    window.location.reload();
+                  } else {
+                    alert("Failed to update status. Please try again.");
+                  }
                 }
               }}
               className="px-4 py-2 bg-stone-800 text-white text-xs font-bold rounded-lg shadow-sm hover:bg-stone-900 transition-colors"
