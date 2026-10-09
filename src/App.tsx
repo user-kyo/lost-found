@@ -27,7 +27,6 @@ import { StaffAIMatches } from "./components/staff/StaffAIMatches";
 // Modals
 import { RegisterFoundItemModal } from "./components/staff/RegisterFoundItemModal";
 import { ClaimVerificationModal } from "./components/staff/ClaimVerificationModal";
-import { RFIDScannerModal } from "./components/staff/RFIDScannerModal";
 
 const AppContent: React.FC = () => {
   const { role, studentView, staffView, screenMode } = useApp();
@@ -101,7 +100,6 @@ const AppContent: React.FC = () => {
         <NotificationDrawer />
         <RegisterFoundItemModal />
         <ClaimVerificationModal />
-        <RFIDScannerModal />
       </div>
     );
   }
@@ -127,7 +125,6 @@ const AppContent: React.FC = () => {
       <NotificationDrawer />
       <RegisterFoundItemModal />
       <ClaimVerificationModal />
-      <RFIDScannerModal />
     </div>
   );
 };

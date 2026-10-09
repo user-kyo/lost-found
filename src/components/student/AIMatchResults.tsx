@@ -14,7 +14,6 @@ import {
   CheckCircle2, 
   Info,
   ChevronRight,
-  HardDrive,
   Check
 } from "lucide-react";
 
@@ -30,7 +29,6 @@ export const AIMatchResults: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [minScore, setMinScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
 
   // If no match results yet, calculate on mount using last report or default
@@ -60,7 +58,7 @@ export const AIMatchResults: React.FC = () => {
         aiSummary: "Found item in municipal inventory matching general category."
       }));
 
-  const filtered = displayResults.filter(({ item, similarityScore }) => {
+  const filtered = displayResults.filter(({ item }) => {
     const matchesQuery = (
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.itemType.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,8 +67,7 @@ export const AIMatchResults: React.FC = () => {
       item.foundLocation.toLowerCase().includes(searchQuery.toLowerCase())
     );
     const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
-    const matchesScore = similarityScore >= minScore;
-    return matchesQuery && matchesCategory && matchesScore;
+    return matchesQuery && matchesCategory;
   });
 
   const handleSelectMatch = (item: FoundItem) => {
@@ -95,7 +92,7 @@ export const AIMatchResults: React.FC = () => {
               Possible Matches
             </h1>
             <p className="text-sm text-stone-500 mt-1">
-              We found items in municipal storage that may match your description.
+              We ranked approved public posts that may match your description.
             </p>
           </div>
 
@@ -114,7 +111,7 @@ export const AIMatchResults: React.FC = () => {
         <ShieldAlert className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
         <div className="text-xs text-amber-900 leading-relaxed">
           <span className="font-bold">Important Notice: </span>
-          AI-generated matches are suggestions only. Final identification must be verified by authorized LGU desk officers before any item is released from smart storage.
+          Matches are suggestions only. Scores are hidden from claimants and final ownership must be verified by authorized LGU staff at the LGU office.
         </div>
       </div>
 
@@ -155,7 +152,7 @@ export const AIMatchResults: React.FC = () => {
       {isLoading ? (
         <div className="py-16 text-center text-stone-400 text-sm">
           <Sparkles className="w-8 h-8 mx-auto mb-2 text-emerald-800 animate-spin" />
-          <p>Analyzing item vectors against storage inventory...</p>
+          <p>Ranking approved public found-item posts...</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white border border-stone-200 rounded-3xl p-12 text-center space-y-4">
@@ -175,10 +172,7 @@ export const AIMatchResults: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(({ item, similarityScore, confidence, matchedAttributes }) => {
-            const isHighMatch = similarityScore >= 85;
-            const isMediumMatch = similarityScore >= 65 && similarityScore < 85;
-
+          {filtered.map(({ item, matchedAttributes }, index) => {
             return (
               <div
                 key={item.id}
@@ -194,26 +188,12 @@ export const AIMatchResults: React.FC = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     
-                    {/* Similarity Score Pill */}
+                    {/* Owner-visible rank only */}
                     <div className="absolute top-3 left-3">
-                      <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1.5 shadow-md backdrop-blur-md ${
-                        isHighMatch
-                          ? "bg-emerald-800/90 text-white"
-                          : isMediumMatch
-                          ? "bg-stone-800/90 text-white"
-                          : "bg-stone-800/80 text-white"
-                      }`}>
+                      <div className="px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1.5 shadow-md backdrop-blur-md bg-emerald-800/90 text-white">
                         <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                        <span>{similarityScore}% Match</span>
+                        <span>Rank #{index + 1}</span>
                       </div>
-                    </div>
-
-                    {/* Storage Location Badge */}
-                    <div className="absolute bottom-3 left-3">
-                      <span className="px-2.5 py-1 rounded-lg bg-stone-900/80 backdrop-blur-xs text-white text-[11px] font-semibold flex items-center space-x-1">
-                        <HardDrive className="w-3 h-3 text-emerald-400" />
-                        <span>{item.storageBoxId} • Slot {item.storageSlotId}</span>
-                      </span>
                     </div>
 
                     {/* Status Badge */}
@@ -241,7 +221,7 @@ export const AIMatchResults: React.FC = () => {
                     {/* Matching Attributes Pill Checklist */}
                     <div className="pt-2 border-t border-stone-100">
                       <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-1.5">
-                        Matched Attributes
+                        Public Clues
                       </span>
                       <div className="flex flex-wrap gap-1.5">
                         {matchedAttributes.slice(0, 3).map((attr, i) => (
