@@ -24,17 +24,15 @@ export const ClaimRequestForm: React.FC = () => {
     setSelectedClaim 
   } = useApp();
 
-  const [claimantName, setClaimantName] = useState(lastSubmittedReport?.studentName || "Maya Lin");
-  const [claimantId, setClaimantId] = useState(lastSubmittedReport?.studentId || "CTZ-2026-8941");
+  const [claimantName, setClaimantName] = useState(lastSubmittedReport?.studentName || "");
+  const [claimantId, setClaimantId] = useState(lastSubmittedReport?.studentId || "");
   const [claimantType, setClaimantType] = useState<"Resident" | "Citizen" | "LGU Employee" | "Student" | "Faculty" | "Staff">("Citizen");
-  const [contactEmail, setContactEmail] = useState(lastSubmittedReport?.email || "maya.lin@civicnet.gov");
-  const [contactPhone, setContactPhone] = useState(lastSubmittedReport?.phone || "(555) 234-8901");
+  const [contactEmail, setContactEmail] = useState(lastSubmittedReport?.email || "");
+  const [contactPhone, setContactPhone] = useState(lastSubmittedReport?.phone || "");
   const [submittedDescription, setSubmittedDescription] = useState(
-    lastSubmittedReport?.rawDescription || "Black Jansport backpack with blue keychain attached to the front pocket."
+    lastSubmittedReport?.rawDescription || ""
   );
-  const [proofOfOwnership, setProofOfOwnership] = useState(
-    "Inside the main pouch is an AP Chemistry textbook with my name 'Maya Lin' written on the cover, and the blue keychain has a house key stamped #204."
-  );
+  const [proofOfOwnership, setProofOfOwnership] = useState("");
   const [supportingImageUrl, setSupportingImageUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -231,23 +229,30 @@ export const ClaimRequestForm: React.FC = () => {
 
             <div>
               <label className="block text-xs font-bold text-stone-700 mb-1">
-                Supporting Photo or Receipt (Optional URL or image)
+                Supporting Photo or Receipt (Optional)
               </label>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-col space-y-3">
                 <input
-                  type="text"
-                  value={supportingImageUrl}
-                  onChange={(e) => setSupportingImageUrl(e.target.value)}
-                  placeholder="Paste URL or upload image (e.g. photo with item, purchase receipt)"
-                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden bg-stone-50/50"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setSupportingImageUrl(reader.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden bg-stone-50/50 file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 file:cursor-pointer cursor-pointer"
                 />
-                <button
-                  type="button"
-                  onClick={() => setSupportingImageUrl("https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=400&q=80")}
-                  className="px-3 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-xl shrink-0"
-                >
-                  Use Sample Photo
-                </button>
+                {supportingImageUrl && (
+                  <div className="relative inline-block self-start">
+                    <img src={supportingImageUrl} alt="Preview" className="h-24 rounded-lg object-cover border border-stone-200 shadow-sm" />
+                    <button type="button" onClick={() => setSupportingImageUrl("")} className="absolute -top-2 -right-2 bg-stone-800 hover:bg-stone-900 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">×</button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

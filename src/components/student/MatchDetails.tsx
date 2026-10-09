@@ -75,7 +75,7 @@ export const MatchDetails: React.FC = () => {
                   <MapPin className="w-4 h-4 text-emerald-400" />
                   <div>
                     <p className="font-bold text-[11px]">Found in San Pablo City</p>
-                    <p className="text-[10px] text-stone-300">{selectedItem.foundLocation}</p>
+                    <p className="text-[10px] text-stone-300">{selectedItem.foundLocation || selectedItem.areaFound}</p>
                   </div>
                 </div>
                 <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
@@ -93,7 +93,7 @@ export const MatchDetails: React.FC = () => {
             </div>
             <div className="flex items-center justify-between py-1 border-b border-stone-100">
               <span className="text-stone-500 font-medium">Brand</span>
-              <span className="font-bold text-stone-800">{selectedItem.brand}</span>
+              <span className="font-bold text-stone-800">{selectedItem.brand || "Not specified"}</span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-stone-100">
               <span className="text-stone-500 font-medium">Color Palette</span>
@@ -101,11 +101,11 @@ export const MatchDetails: React.FC = () => {
             </div>
             <div className="flex items-center justify-between py-1 border-b border-stone-100">
               <span className="text-stone-500 font-medium">Found Location</span>
-              <span className="font-bold text-stone-800">{selectedItem.foundLocation}</span>
+              <span className="font-bold text-stone-800">{selectedItem.foundLocation || selectedItem.areaFound}</span>
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-stone-500 font-medium">Date Registered</span>
-              <span className="font-bold text-stone-800">{selectedItem.foundDate}</span>
+              <span className="font-bold text-stone-800">{selectedItem.foundDate || (selectedItem.dateFound ? new Date(selectedItem.dateFound).toLocaleDateString() : 'N/A')}</span>
             </div>
           </div>
         </div>
@@ -117,10 +117,10 @@ export const MatchDetails: React.FC = () => {
               Item Match Details
             </span>
             <h1 className="text-2xl font-extrabold text-stone-900 mt-1">
-              {selectedItem.title}
+              {selectedItem.title || `${selectedItem.color} ${selectedItem.category}`}
             </h1>
             <p className="text-xs text-stone-500 mt-1">
-              Surrendered by {selectedItem.surrenderedBy} on {selectedItem.foundDate}
+              Surrendered by {selectedItem.surrenderedBy || "Anonymous"} on {selectedItem.foundDate || (selectedItem.dateFound ? new Date(selectedItem.dateFound).toLocaleDateString() : 'N/A')}
             </p>
           </div>
 
@@ -158,13 +158,13 @@ export const MatchDetails: React.FC = () => {
                   <span>Found Item Public Post</span>
                 </div>
                 <p className="text-xs text-stone-700 leading-relaxed">
-                  {selectedItem.description}
+                  {selectedItem.description || selectedItem.publicDescription}
                 </p>
                 <div className="pt-2 text-[11px] space-y-1 text-stone-600 border-t border-stone-200">
                   <p><span className="font-semibold text-stone-900">Type:</span> {selectedItem.itemType}</p>
                   <p><span className="font-semibold text-stone-900">Color:</span> {selectedItem.color}</p>
                   <p><span className="font-semibold text-stone-900">Brand:</span> {selectedItem.brand}</p>
-                  <p><span className="font-semibold text-stone-900">Found Area:</span> {selectedItem.foundLocation}</p>
+                  <p><span className="font-semibold text-stone-900">Found Area:</span> {selectedItem.foundLocation || selectedItem.areaFound}</p>
                 </div>
               </div>
             </div>
@@ -185,7 +185,7 @@ export const MatchDetails: React.FC = () => {
                 </li>
                 <li className="flex items-center space-x-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
-                  <span><strong>Public description:</strong> {selectedItem.description}</span>
+                  <span><strong>Public description:</strong> {selectedItem.description || selectedItem.publicDescription}</span>
                 </li>
               </ul>
             </div>
@@ -226,7 +226,7 @@ export const MatchDetails: React.FC = () => {
                 Ready to Request Verification?
               </h3>
               <p className="text-xs text-stone-500 leading-relaxed">
-                Submitting a claim initiates municipal officer ownership verification for <strong>{selectedItem.title} (#{selectedItem.id})</strong>. Handover can happen only at the LGU office after staff approval.
+                Submitting a claim initiates municipal officer ownership verification for <strong>{selectedItem.title || `${selectedItem.color} ${selectedItem.category}`} (#{selectedItem.id})</strong>. Handover can happen only at the LGU office after staff approval.
               </p>
             </div>
 

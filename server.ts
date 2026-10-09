@@ -277,7 +277,7 @@ app.get("/api/posts/mine", authenticate, async (req: any, res: any) => {
   try {
     const posts = await prisma.post.findMany({
       where: { finderId: req.user.userId },
-      include: { privateDetails: true, flags: true }
+      include: { privateDetails: true, flags: true, claims: true }
     });
     res.json(posts);
   } catch (error) {
@@ -305,7 +305,8 @@ app.post("/api/search", authenticate, async (req: any, res: any) => {
         color: true,
         publicDescription: true,
         dateFound: true,
-        areaFound: true
+        areaFound: true,
+        imageUrl: true
       }
     });
 
@@ -354,6 +355,21 @@ app.get("/api/admin/review-queue", authenticate, async (req: any, res: any) => {
     res.json(queue);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch queue" });
+  }
+});
+
+app.get("/api/admin/inventory", authenticate, async (req: any, res: any) => {
+  if (req.user.role !== "admin") return res.status(403).json({ error: "Forbidden" });
+
+  try {
+    const inventory = await prisma.post.findMany({
+      where: { status: "available" },
+      include: { privateDetails: true, flags: true, finder: { select: { fullName: true } }, claims: true },
+      orderBy: { createdAt: "desc" }
+    });
+    res.json(inventory);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch inventory" });
   }
 });
 

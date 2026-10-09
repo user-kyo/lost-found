@@ -28,6 +28,7 @@ import { StaffAIMatches } from "./components/staff/StaffAIMatches";
 // Admin components
 import { AdminDashboard } from "./components/admin/AdminDashboard";
 import { AdminClaims } from "./components/admin/AdminClaims";
+import { AdminInventory } from "./components/admin/AdminInventory";
 
 // Auth
 import { AuthScreens } from "./components/auth/AuthScreens";
@@ -72,6 +73,8 @@ const AppContent: React.FC = () => {
     switch (staffView) {
       case "dashboard":
         return <AdminDashboard />;
+      case "found_items":
+        return <AdminInventory />;
       case "claims":
       case "claim_requests":
         return <AdminClaims />;

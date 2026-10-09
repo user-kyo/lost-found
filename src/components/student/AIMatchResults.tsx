@@ -51,27 +51,17 @@ export const AIMatchResults: React.FC = () => {
         // if data is just unranked posts, we map them. If it's ranked objects, we use them.
         if (Array.isArray(data)) {
           const formatted = data.map((d: any) => {
-            if (d.item && d.similarityScore !== undefined) {
-              // It's a ranked match from Python NLP
-              return {
-                item: d.item,
-                similarityScore: d.similarityScore,
-                confidence: d.similarityScore > 50 ? "High" : "Medium",
-                matchedAttributes: d.matchedAttributes || ["TF-IDF Text Match"],
-                discrepancies: [],
-                aiSummary: "Ranked by Hybrid TF-IDF AI Engine"
-              };
-            } else {
-              // Fallback unranked posts
-              return {
-                item: d,
-                similarityScore: 70,
-                confidence: "Medium",
-                matchedAttributes: ["Category match"],
-                discrepancies: [],
-                aiSummary: "Unranked item"
-              };
-            }
+            const actualItem = d.item || d.record || d;
+            const simScore = d.similarityScore !== undefined ? d.similarityScore : 70;
+            
+            return {
+              item: actualItem,
+              similarityScore: simScore,
+              confidence: simScore > 50 ? "High" : "Medium",
+              matchedAttributes: d.matchedAttributes || ["Category match"],
+              discrepancies: d.discrepancies || [],
+              aiSummary: d.aiSummary || (d.similarityScore !== undefined ? "Ranked by Hybrid TF-IDF AI Engine" : "Unranked item")
+            };
           });
           setServerMatches(formatted);
         }
@@ -235,10 +225,10 @@ export const AIMatchResults: React.FC = () => {
                       <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
                         {item.category} • #{item.id?.toString().slice(-6)}
                       </span>
-                      <h3 className="text-base font-bold text-stone-900 group-hover:text-emerald-800 transition-colors">
+                      <h3 className="text-base font-bold text-stone-900 group-hover:text-emerald-800 transition-colors capitalize">
                         {item.title || `${item.color} ${item.category}`}
                       </h3>
-                      <p className="text-xs text-stone-600 mt-1 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-stone-600 mt-1 line-clamp-2 leading-relaxed first-letter:capitalize">
                         {item.publicDescription || item.description}
                       </p>
                     </div>
@@ -265,7 +255,7 @@ export const AIMatchResults: React.FC = () => {
                     <div className="space-y-1 text-xs text-stone-600 pt-1">
                       <div className="flex items-center space-x-1.5 text-[11px] text-stone-500">
                         <MapPin className="w-3.5 h-3.5 text-stone-400 shrink-0" />
-                        <span className="truncate">Found: {item.areaFound || item.foundLocation}</span>
+                        <span className="truncate capitalize">Found: {item.areaFound || item.foundLocation}</span>
                       </div>
                       <div className="flex items-center space-x-1.5 text-[11px] text-stone-500">
                         <Calendar className="w-3.5 h-3.5 text-stone-400 shrink-0" />

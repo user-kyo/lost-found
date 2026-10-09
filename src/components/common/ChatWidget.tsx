@@ -143,17 +143,29 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ claimId }) => {
             </div>
           )}
           <form onSubmit={sendMessage} className="p-3 flex items-center space-x-2">
-            <button
-              type="button"
-              onClick={() => {
-                const url = prompt("Enter an image URL (e.g. from Unsplash):", "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=400&q=80");
-                if (url) setImageUrl(url);
-              }}
-              className="p-2 text-stone-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+            <label
+              className="p-2 text-stone-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
               title="Attach Image"
             >
               <ImageIcon className="w-5 h-5" />
-            </button>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setImageUrl(reader.result as string);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                  // Reset input value so the same file can be selected again
+                  e.target.value = '';
+                }}
+              />
+            </label>
             <input
               type="text"
               value={newMessage}

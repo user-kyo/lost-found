@@ -195,12 +195,12 @@ class BalikHubNLPModel:
             score = similarities[idx]
             
             # Filter weak candidates
-            if score > 0.0: 
+            if score >= self.confidence_threshold: 
                 results.append({
                     "id": self.database_ids[idx],
-                    "record": self.database_records[idx],
+                    "item": self.database_records[idx],
                     "similarityScore": int(score * 100),
-                    "confidence": "High" if score >= self.confidence_threshold else "Low"
+                    "confidence": "High"
                 })
                 
             if len(results) >= 5: # Retain only Top-5 matches as per paper specs
