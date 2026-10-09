@@ -535,7 +535,7 @@ app.post("/api/admin/claims/:id/:action", authenticate, async (req: any, res: an
   // action can be: approve (starts chat/handover), reject, complete (handover done)
   
   try {
-    const claim = await prisma.claim.findUnique({ where: { id } });
+    const claim = await prisma.claim.findUnique({ where: { id }, include: { post: true } });
     if (!claim) return res.status(404).json({ error: "Claim not found" });
 
     let newStatus = claim.status;
@@ -656,15 +656,18 @@ app.post("/api/claims/:id/complete-external", authenticate, async (req: any, res
       data: { status: "closed" }
     });
 
-    // Create a mock handover log to fulfill schema requirements (finder or owner acts as staff here conceptually, or we use a system ID. Let's just use the current user)
+    // Create a mock handover log to fulfill schema requirements
     await prisma.handoverLog.create({
       data: {
         claimId: claim.id,
-        staffId: req.user.userId,
-        status: "success",
-        notes: "Item returned via external independent meetup. Confirmed by user.",
-        idPresented: "N/A - External Meetup",
-        matchScore: 100
+        postId: claim.postId,
+        adminId: req.user.userId,
+        claimantName: "External Meetup Confirmed",
+        claimantIdType: "N/A",
+        finderId: claim.post?.finderId || req.user.userId, // We need to make sure we have finderId. Let's assume it was fetched, or we fallback
+        questionsAsked: "N/A - External Independent Meetup",
+        result: "Success",
+        notes: "Item returned via external independent meetup. Confirmed by user."
       }
     });
 
