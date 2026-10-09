@@ -15,6 +15,10 @@ class MatchRequest(BaseModel):
     lostAttributes: Optional[Dict[str, Any]] = None
     foundItem: Dict[str, Any]
 
+class SearchRequest(BaseModel):
+    query: str
+    availablePosts: List[Dict[str, Any]]
+
 @app.on_event("startup")
 def startup_event():
     # Initialize the TF-IDF vectorizer with mock data to build the global vocabulary
@@ -39,6 +43,23 @@ def extract_attributes(req: ExtractRequest):
         "source": "python_tfidf_pipeline",
         "data": attributes
     }
+
+@app.post("/api/search")
+def search_posts(req: SearchRequest):
+    if not req.availablePosts:
+        return []
+
+    documents = [f"{r.get('category', '')} {r.get('color', '')} {r.get('publicDescription', '')} {r.get('areaFound', '')}" for r in req.availablePosts]
+    ids = [r.get('id') for r in req.availablePosts]
+    
+    temp_model = BalikHubNLPModel()
+    try:
+        temp_model.train(documents, ids, req.availablePosts)
+        matches = temp_model.predict_matches(req.query)
+        return matches
+    except Exception as e:
+        print(f"TF-IDF matching failed: {e}")
+        return req.availablePosts
 
 @app.post("/api/match-analyze")
 def match_analyze(req: MatchRequest):

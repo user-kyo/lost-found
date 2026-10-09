@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   UserRole,
+  User,
   FoundItem,
   LostReport,
   ClaimRequest,
@@ -18,11 +19,16 @@ import {
   INITIAL_NOTIFICATIONS
 } from "../data/mockData";
 
-export type StudentNavView = "home" | "report" | "search" | "reports" | "claims" | "match_details" | "claim_request" | "claim_tracking";
+export type StudentNavView = "home" | "report" | "report_found" | "search" | "reports" | "claims" | "match_details" | "claim_request" | "claim_tracking";
 export type StaffNavView = "dashboard" | "found_items" | "lost_reports" | "ai_matches" | "claim_requests" | "storage_box" | "audit_logs";
 export type ScreenMode = "desktop" | "mobile";
 
 interface AppContextType {
+  user: User | null;
+  login: (email: string, pass: string) => Promise<void>;
+  register: (data: any) => Promise<void>;
+  logout: () => void;
+  
   role: UserRole;
   setRole: (role: UserRole) => void;
   studentView: StudentNavView;
@@ -78,39 +84,80 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [role, setRole] = useState<UserRole>("student");
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem("slf_user");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [role, setRole] = useState<UserRole>("student"); // Keeping fallback role for legacy components
   const [studentView, setStudentView] = useState<StudentNavView>("home");
   const [staffView, setStaffView] = useState<StaffNavView>("dashboard");
   const [screenMode, setScreenMode] = useState<ScreenMode>("desktop");
 
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("slf_user", JSON.stringify(user));
+      // Map new roles to old component views temporarily
+      if (user.role === "admin") setRole("staff");
+      else setRole("student");
+    } else {
+      localStorage.removeItem("slf_user");
+    }
+  }, [user]);
+
+  const login = async (email: string, password: string) => {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    setUser({ ...data.user, token: data.token });
+  };
+
+  const register = async (userData: any) => {
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    setUser({ ...data.user, token: data.token });
+  };
+
+  const logout = () => {
+    setUser(null);
+  };
+
   // Persistent or initial state
   const [foundItems, setFoundItems] = useState<FoundItem[]>(() => {
-    const saved = localStorage.getItem("slf_found_items");
+    const saved = localStorage.getItem("slf_found_items_v2");
     return saved ? JSON.parse(saved) : INITIAL_FOUND_ITEMS;
   });
 
   const [lostReports, setLostReports] = useState<LostReport[]>(() => {
-    const saved = localStorage.getItem("slf_lost_reports");
+    const saved = localStorage.getItem("slf_lost_reports_v2");
     return saved ? JSON.parse(saved) : INITIAL_LOST_REPORTS;
   });
 
   const [claims, setClaims] = useState<ClaimRequest[]>(() => {
-    const saved = localStorage.getItem("slf_claims");
+    const saved = localStorage.getItem("slf_claims_v2");
     return saved ? JSON.parse(saved) : INITIAL_CLAIMS;
   });
 
   const [storageBoxes, setStorageBoxes] = useState<StorageBoxUnit[]>(() => {
-    const saved = localStorage.getItem("slf_storage_boxes");
+    const saved = localStorage.getItem("slf_storage_boxes_v2");
     return saved ? JSON.parse(saved) : INITIAL_STORAGE_BOXES;
   });
 
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(() => {
-    const saved = localStorage.getItem("slf_audit_logs");
+    const saved = localStorage.getItem("slf_audit_logs_v2");
     return saved ? JSON.parse(saved) : INITIAL_AUDIT_LOGS;
   });
 
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
-    const saved = localStorage.getItem("slf_notifications");
+    const saved = localStorage.getItem("slf_notifications_v2");
     return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
   });
 
@@ -127,27 +174,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem("slf_found_items", JSON.stringify(foundItems));
+    localStorage.setItem("slf_found_items_v2", JSON.stringify(foundItems));
   }, [foundItems]);
 
   useEffect(() => {
-    localStorage.setItem("slf_lost_reports", JSON.stringify(lostReports));
+    localStorage.setItem("slf_lost_reports_v2", JSON.stringify(lostReports));
   }, [lostReports]);
 
   useEffect(() => {
-    localStorage.setItem("slf_claims", JSON.stringify(claims));
+    localStorage.setItem("slf_claims_v2", JSON.stringify(claims));
   }, [claims]);
 
   useEffect(() => {
-    localStorage.setItem("slf_storage_boxes", JSON.stringify(storageBoxes));
+    localStorage.setItem("slf_storage_boxes_v2", JSON.stringify(storageBoxes));
   }, [storageBoxes]);
 
   useEffect(() => {
-    localStorage.setItem("slf_audit_logs", JSON.stringify(auditLogs));
+    localStorage.setItem("slf_audit_logs_v2", JSON.stringify(auditLogs));
   }, [auditLogs]);
 
   useEffect(() => {
-    localStorage.setItem("slf_notifications", JSON.stringify(notifications));
+    localStorage.setItem("slf_notifications_v2", JSON.stringify(notifications));
   }, [notifications]);
 
   // Actions
@@ -577,6 +624,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider
       value={{
+        user,
+        login,
+        register,
+        logout,
         role,
         setRole,
         studentView,

@@ -9,6 +9,7 @@ import { MobileNavBar } from "./components/common/MobileNavBar";
 // Student components
 import { StudentHome } from "./components/student/StudentHome";
 import { ReportLostItem } from "./components/student/ReportLostItem";
+import { ReportFoundItem } from "./components/student/ReportFoundItem";
 import { AIMatchResults } from "./components/student/AIMatchResults";
 import { MatchDetails } from "./components/student/MatchDetails";
 import { ClaimRequestForm } from "./components/student/ClaimRequestForm";
@@ -24,12 +25,23 @@ import { StaffAuditLogs } from "./components/staff/StaffAuditLogs";
 import { StaffLostReports } from "./components/staff/StaffLostReports";
 import { StaffAIMatches } from "./components/staff/StaffAIMatches";
 
+// Admin components
+import { AdminDashboard } from "./components/admin/AdminDashboard";
+import { AdminClaims } from "./components/admin/AdminClaims";
+
+// Auth
+import { AuthScreens } from "./components/auth/AuthScreens";
+
 // Modals
 import { RegisterFoundItemModal } from "./components/staff/RegisterFoundItemModal";
 import { ClaimVerificationModal } from "./components/staff/ClaimVerificationModal";
 
 const AppContent: React.FC = () => {
-  const { role, studentView, staffView, screenMode } = useApp();
+  const { user, role, studentView, staffView, screenMode } = useApp();
+
+  if (!user) {
+    return <AuthScreens />;
+  }
 
   const renderStudentView = () => {
     switch (studentView) {
@@ -37,6 +49,8 @@ const AppContent: React.FC = () => {
         return <StudentHome />;
       case "report":
         return <ReportLostItem />;
+      case "report_found":
+        return <ReportFoundItem />;
       case "search":
         return <AIMatchResults />;
       case "match_details":
@@ -57,21 +71,12 @@ const AppContent: React.FC = () => {
   const renderStaffView = () => {
     switch (staffView) {
       case "dashboard":
-        return <StaffDashboard />;
-      case "found_items":
-        return <StaffFoundInventory />;
+        return <AdminDashboard />;
+      case "claims":
       case "claim_requests":
-        return <StaffClaimRequests />;
-      case "storage_box":
-        return <StaffStorageBox />;
-      case "audit_logs":
-        return <StaffAuditLogs />;
-      case "lost_reports":
-        return <StaffLostReports />;
-      case "ai_matches":
-        return <StaffAIMatches />;
+        return <AdminClaims />;
       default:
-        return <StaffDashboard />;
+        return <AdminDashboard />;
     }
   };
 

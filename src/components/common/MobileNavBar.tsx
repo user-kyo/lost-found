@@ -35,7 +35,7 @@ export const MobileNavBar: React.FC = () => {
     <div className="sticky bottom-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200/90 shadow-lg px-2 py-1.5 transition-all">
       {role === "student" ? (
         /* Citizen Mobile Navigation */
-        <nav aria-label="Citizen Mobile Navigation" className="grid grid-cols-5 items-center max-w-lg mx-auto">
+        <nav aria-label="Citizen Mobile Navigation" className="grid grid-cols-4 items-center max-w-lg mx-auto">
           {/* 1. Home */}
           <button
             onClick={() => setStudentView("home")}
@@ -49,18 +49,7 @@ export const MobileNavBar: React.FC = () => {
             <span className="text-[10px] mt-0.5 tracking-tight">Home</span>
           </button>
 
-          {/* 2. Find / Search */}
-          <button
-            onClick={() => setStudentView("search")}
-            className={`flex flex-col items-center justify-center py-1 rounded-xl transition-colors ${
-              studentView === "search" || studentView === "match_details"
-                ? "text-emerald-800 font-bold"
-                : "text-stone-500 hover:text-stone-800"
-            }`}
-          >
-            <Search className={`w-5 h-5 ${studentView === "search" || studentView === "match_details" ? "stroke-[2.5]" : "stroke-2"}`} />
-            <span className="text-[10px] mt-0.5 tracking-tight">Catalog</span>
-          </button>
+          {/* 2. Find / Search removed */}
 
           {/* 3. Center Action: Report Item (Prominent Elevated Button) */}
           <button
