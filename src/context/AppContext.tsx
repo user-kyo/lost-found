@@ -8,7 +8,8 @@ import {
   StorageBoxUnit,
   AuditLogEntry,
   AppNotification,
-  AIMatchResult
+  AIMatchResult,
+  ReleaseHandoverRecord
 } from "../types";
 import {
   INITIAL_FOUND_ITEMS,
@@ -59,11 +60,13 @@ interface AppContextType {
   // Actions
   addNewLostReport: (report: Omit<LostReport, "id" | "createdAt">) => LostReport;
   registerFoundItem: (itemData: Omit<FoundItem, "id" | "createdAt" | "qrCodeData">) => FoundItem;
+  verifyFoundItem: (itemId: string, staffName: string) => void;
+  publishFoundItem: (itemId: string, staffName: string) => void;
   submitClaimRequest: (claimData: Omit<ClaimRequest, "id" | "submittedDate" | "status">) => ClaimRequest;
   approveClaim: (claimId: string, staffName: string) => void;
   rejectClaim: (claimId: string, reason: string, staffName: string) => void;
   requestClaimInfo: (claimId: string, message: string) => void;
-  verifyRFIDAndRelease: (claimId: string, staffName: string) => boolean;
+  verifyRFIDAndRelease: (claimId: string, staffName: string, releaseDetails?: Partial<ReleaseHandoverRecord>) => boolean;
   unlockStorageSlot: (boxId: string, slotId: string, staffName: string) => void;
   lockStorageSlot: (boxId: string, slotId: string) => void;
   toggleMasterBoxLock: (boxId: string) => void;
@@ -91,14 +94,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [role, setRole] = useState<UserRole>("student"); // Keeping fallback role for legacy components
   const [studentView, setStudentView] = useState<StudentNavView>("home");
   const [staffView, setStaffView] = useState<StaffNavView>("dashboard");
-  const [screenMode, setScreenMode] = useState<ScreenMode>("desktop");
+  const [screenMode, setScreenMode] = useState<ScreenMode>(() => {
+    const saved = localStorage.getItem("balikhub_screen_mode");
+    if (saved === "desktop" || saved === "mobile") return saved as ScreenMode;
+    return typeof window !== "undefined" && window.innerWidth < 768 ? "mobile" : "desktop";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("balikhub_screen_mode", screenMode);
+  }, [screenMode]);
 
   useEffect(() => {
     if (user) {
       localStorage.setItem("slf_user", JSON.stringify(user));
-      // Map new roles to old component views temporarily
-      if (user.role === "admin") setRole("staff");
-      else setRole("student");
+      // Map roles to student/claimant vs guidance/staff layout
+      if (user.role === "claimant" || user.role === "student" || user.role === "citizen") {
+        setRole("student");
+      } else {
+        setRole("staff");
+      }
     } else {
       localStorage.removeItem("slf_user");
     }
@@ -248,46 +262,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const registerFoundItem = (itemData: Omit<FoundItem, "id" | "createdAt" | "qrCodeData">): FoundItem => {
     const id = `LF-2026-${String(Math.floor(45 + Math.random() * 900)).padStart(4, "0")}`;
-    const qrCodeData = `${id}|${itemData.storageBoxId}-${itemData.storageSlotId}|${itemData.brand}-${itemData.color}`;
+    const qrCodeData = `${id}|${itemData.storageBoxId || 'SEC'}-${itemData.storageSlotId || '01'}|${itemData.brand || 'Item'}-${itemData.color || 'Gen'}`;
     
+    // Strict status transition flow starts at "received"
     const newItem: FoundItem = {
       id,
       createdAt: new Date().toISOString(),
       qrCodeData,
+      status: "received",
       ...itemData
     };
 
     setFoundItems(prev => [newItem, ...prev]);
 
-    // Update storage box slot status to occupied
-    setStorageBoxes(prevBoxes => prevBoxes.map(box => {
-      if (box.id === itemData.storageBoxId) {
-        return {
-          ...box,
-          slots: box.slots.map(slot => {
-            if (slot.id === itemData.storageSlotId) {
-              return { ...slot, status: "occupied", currentLFId: id, lastOpenedAt: new Date().toISOString() };
-            }
-            return slot;
-          })
-        };
-      }
-      return box;
-    }));
+    // Update storage box slot status to occupied if assigned
+    if (itemData.storageBoxId && itemData.storageSlotId) {
+      setStorageBoxes(prevBoxes => prevBoxes.map(box => {
+        if (box.id === itemData.storageBoxId) {
+          return {
+            ...box,
+            slots: box.slots.map(slot => {
+              if (slot.id === itemData.storageSlotId) {
+                return { ...slot, status: "occupied", currentLFId: id, lastOpenedAt: new Date().toISOString() };
+              }
+              return slot;
+            })
+          };
+        }
+        return box;
+      }));
+    }
 
     addAuditLog({
-      user: itemData.surrenderedBy,
-      role: "LGU Desk Officer",
+      user: itemData.surrenderedBy || "Guidance Desk Officer",
+      role: "Guidance Staff",
       action: "ITEM_REGISTERED",
       itemId: id,
-      details: `Cataloged ${newItem.title}. Awaiting LGU review before publication.`,
-      device: "LGU Intake Station",
+      details: `Intake logged for ${newItem.title} (Status: received). Condition: ${newItem.condition || 'Good'}. Storage: ${newItem.storageLocation || 'Intake Shelf'}.`,
+      device: "Guidance Office Intake Station",
       result: "Success"
     });
 
     addNotification({
-      title: "New Item Registered in LGU Storage",
-      message: `${newItem.title} registered in ${itemData.storageBoxId} Slot ${itemData.storageSlotId}.`,
+      title: "New Item Received at Guidance Desk",
+      message: `${newItem.title} intake logged (Status: received). Ready for physical verification.`,
       type: "staff_action",
       recipientRole: "staff",
       relatedItemId: id
@@ -296,7 +314,83 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return newItem;
   };
 
+  // Status transition: received -> verified
+  const verifyFoundItem = (itemId: string, staffName: string) => {
+    setFoundItems(prev => prev.map(item => {
+      if (item.id === itemId) {
+        return {
+          ...item,
+          status: "verified",
+          verifiedAt: new Date().toISOString(),
+          verifiedBy: staffName
+        };
+      }
+      return item;
+    }));
+
+    addAuditLog({
+      user: staffName,
+      role: "Guidance Staff",
+      action: "ITEM_REGISTERED",
+      itemId,
+      details: `Physical characteristics and custody verified by ${staffName}. Status transitioned: received -> verified.`,
+      device: "Guidance Office Console",
+      result: "Success"
+    });
+
+    addNotification({
+      title: "Item Verified by Guidance Personnel",
+      message: `Item #${itemId} has been verified and is ready for publication review.`,
+      type: "staff_action",
+      recipientRole: "staff",
+      relatedItemId: itemId
+    });
+  };
+
+  // Status transition: verified -> published
+  const publishFoundItem = (itemId: string, staffName: string) => {
+    setFoundItems(prev => prev.map(item => {
+      if (item.id === itemId) {
+        return {
+          ...item,
+          status: "published",
+          publishedAt: new Date().toISOString()
+        };
+      }
+      return item;
+    }));
+
+    addAuditLog({
+      user: staffName,
+      role: "Guidance Staff",
+      action: "ITEM_REGISTERED",
+      itemId,
+      details: `Item #${itemId} approved and published to public student feed by ${staffName}. Status transitioned: verified -> published.`,
+      device: "Guidance Office Console",
+      result: "Success"
+    });
+
+    addNotification({
+      title: "Item Published to Public Catalog",
+      message: `Item #${itemId} is now live and searchable by students for claim matching.`,
+      type: "staff_action",
+      recipientRole: "all",
+      relatedItemId: itemId
+    });
+  };
+
   const submitClaimRequest = (claimData: Omit<ClaimRequest, "id" | "submittedDate" | "status">): ClaimRequest => {
+    // Strict limit: Limit to one active claim per item (claim_pending)
+    const targetItem = foundItems.find(i => i.id === claimData.itemId);
+    const existingActiveClaim = claims.find(
+      c => c.itemId === claimData.itemId && !["rejected", "released", "cancelled"].includes(c.status)
+    );
+
+    if (targetItem?.status === "claim_pending" || existingActiveClaim) {
+      alert("This item already has an active claim pending verification. Only one active claim per item is permitted at a time.");
+      throw new Error("Item already has an active claim pending verification.");
+    }
+
     const id = `CLM-2026-${String(Math.floor(90 + Math.random() * 900)).padStart(4, "0")}`;
     const newClaim: ClaimRequest = {
       id,
@@ -429,9 +523,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
 
     if (targetItemId) {
+      // Strict status transition rule: If a claim is rejected, it reverts from claim_pending to published
       setFoundItems(prev => prev.map(item => {
         if (item.id === targetItemId) {
-          return { ...item, status: "unclaimed" };
+          return { ...item, status: "published" };
         }
         return item;
       }));
@@ -439,18 +534,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     addAuditLog({
       user: `LGU Officer: ${staffName}`,
-      role: "LGU Desk Officer",
+      role: "Guidance Staff",
       action: "CLAIM_REJECTED",
       itemId: targetItemId,
       claimId,
-      details: `Claim rejected: "${reason}".`,
-      device: "LGU Admin Console",
+      details: `Claim rejected: "${reason}". Item status strictly reverted: claim_pending -> published.`,
+      device: "Guidance Admin Console",
       result: "Rejected"
     });
 
     addNotification({
       title: "Claim Verification Notice",
-      message: `Your claim for item #${targetItemId} could not be verified: ${reason}`,
+      message: `Claim for item #${targetItemId} could not be verified: ${reason}. Item returned to published catalog.`,
       type: "claim_update",
       recipientRole: "student",
       relatedClaimId: claimId
@@ -467,19 +562,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     addNotification({
       title: "Additional Verification Details Requested",
-      message: `LGU officer requested additional proof: "${message}"`,
+      message: `Guidance officer requested additional proof: "${message}"`,
       type: "claim_update",
       recipientRole: "student",
       relatedClaimId: claimId
     });
   };
 
-  const verifyRFIDAndRelease = (claimId: string, staffName: string): boolean => {
+  const verifyRFIDAndRelease = (
+    claimId: string, 
+    staffName: string, 
+    releaseDetails?: Partial<ReleaseHandoverRecord>
+  ): boolean => {
     const claim = claims.find(c => c.id === claimId);
     if (!claim) return false;
 
     const item = foundItems.find(i => i.id === claim.itemId);
     if (!item) return false;
+
+    const fullReleaseRecord: ReleaseHandoverRecord = {
+      claimId,
+      postId: item.id,
+      recipientName: releaseDetails?.recipientName || claim.claimantName,
+      recipientSchoolId: releaseDetails?.recipientSchoolId || claim.claimantId,
+      recipientContact: releaseDetails?.recipientContact || claim.contactPhone || claim.contactEmail || "Provided at Office",
+      recipientType: releaseDetails?.recipientType || "Actual Owner",
+      idTypePresented: releaseDetails?.idTypePresented || "University Student ID",
+      idNumber: releaseDetails?.idNumber || "Verified at Guidance Desk",
+      releaseDateTime: releaseDetails?.releaseDateTime || new Date().toISOString(),
+      approvingStaffMember: staffName,
+      acknowledgmentOfReceipt: releaseDetails?.acknowledgmentOfReceipt || {
+        confirmed: true,
+        statement: "Recipient confirms physical receipt of the item in good condition from the Guidance Office.",
+        signedAt: new Date().toISOString()
+      },
+      verificationSummary: releaseDetails?.verificationSummary || `Item inspected and verified in person by Guidance Officer ${staffName}.`,
+      staffNotes: releaseDetails?.staffNotes || ""
+    };
 
     // Update claim to released
     setClaims(prev => prev.map(c => {
@@ -488,18 +607,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ...c,
           status: "released",
           rfidScanned: true,
-          releasedDate: new Date().toISOString()
+          releasedDate: new Date().toISOString(),
+          releaseRecord: fullReleaseRecord
         };
       }
       return c;
     }));
 
-    // Update item to claimed
+    // Strict status transition: Final released status
     setFoundItems(prev => prev.map(i => {
       if (i.id === item.id) {
         return {
           ...i,
-          status: "claimed",
+          status: "released",
+          releasedAt: new Date().toISOString(),
           claimedBy: {
             name: claim.claimantName,
             studentId: claim.claimantId,
@@ -652,6 +773,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setLastSubmittedReport,
         addNewLostReport,
         registerFoundItem,
+        verifyFoundItem,
+        publishFoundItem,
         submitClaimRequest,
         approveClaim,
         rejectClaim,

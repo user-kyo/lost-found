@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
-import { PlusCircle, Loader2, PackageSearch } from "lucide-react";
+import { PlusCircle, Loader2, PackageSearch, X } from "lucide-react";
 
 export const ReportFoundItem: React.FC = () => {
   const { user, setStudentView } = useApp();
@@ -81,15 +81,26 @@ export const ReportFoundItem: React.FC = () => {
         <div className="relative z-10">
           <div className="inline-flex items-center space-x-2 px-3 py-1 mb-4 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-xs font-semibold text-emerald-300 shadow-inner">
             <PackageSearch className="w-4 h-4 text-emerald-400" />
-            <span>Found Item Report</span>
+            <span>Found Property Turnover Protocol</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-100 to-stone-400 tracking-tight">
-            Report Found Item
+            Surrender a Found Item
           </h1>
           <p className="text-stone-300/80 text-sm sm:text-base mt-2 max-w-xl font-medium">
-            Submit details of an item you found. The public description will be visible to everyone, while private details are only visible to LGU Staff to verify ownership.
+            To protect student property and maintain strict chain-of-custody, finders surrender items directly to the Guidance Office. Staff conducts official intake logging, condition inspection, and verification.
           </p>
         </div>
+      </div>
+
+      {/* Guidance Desk Advisory */}
+      <div className="p-6 rounded-[2rem] bg-amber-50 border border-amber-200 text-stone-800 space-y-3 shadow-xs">
+        <h4 className="text-sm font-extrabold text-amber-900 flex items-center gap-2">
+          <PackageSearch className="w-4 h-4 text-amber-700" />
+          Guidance Office Intake Notice (Finders do not manage online accounts)
+        </h4>
+        <p className="text-xs text-amber-800 font-medium leading-relaxed">
+          Please bring the surrendered property directly to the <strong>Guidance Office (Administration Bldg Room 102)</strong>. A desk officer will manually capture your contact information, inspect the item, assess its condition, and place it in secure storage.
+        </p>
       </div>
 
       <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 shadow-sm border border-stone-200/80">

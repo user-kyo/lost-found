@@ -14,7 +14,8 @@ import {
   Sparkles,
   Lock,
   QrCode,
-  Filter
+  Filter,
+  Package
 } from "lucide-react";
 
 export const StaffClaimRequests: React.FC = () => {

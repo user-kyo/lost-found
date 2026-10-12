@@ -4,6 +4,7 @@ import { Header } from "./components/common/Header";
 import { Footer } from "./components/common/Footer";
 import { NotificationDrawer } from "./components/common/NotificationDrawer";
 import { MobileNavBar } from "./components/common/MobileNavBar";
+import { DeviceFrameSwitcher } from "./components/common/DeviceFrameSwitcher";
 import { SettingsPage } from "./components/common/SettingsPage";
 
 // Student components
@@ -90,28 +91,58 @@ const AppContent: React.FC = () => {
     }
   };
 
-  // Mobile View Layout (Forced Global)
-  return (
-    <div className="fixed inset-0 bg-stone-200/60 font-sans flex justify-center selection:bg-blue-800 selection:text-white animate-in fade-in duration-500 overflow-hidden">
-      {/* Fluid Native Mobile App Container */}
-      <div className="w-full max-w-md bg-stone-50 h-full shadow-2xl border-x border-stone-300 flex flex-col relative">
-        {/* Mobile Header */}
-        <Header />
+  // Mobile View Layout
+  if (screenMode === "mobile") {
+    return (
+      <div className="min-h-screen bg-stone-200/60 font-sans flex flex-col selection:bg-blue-800 selection:text-white">
+        {/* Device Switcher Bar */}
+        <DeviceFrameSwitcher />
 
-        {/* Scrollable Mobile View Content */}
-        <main className="flex-1 overflow-y-auto pb-6 px-4 sm:px-5 pt-4 animate-in slide-in-from-bottom-4 fade-in duration-700">
-          {role === "student" ? renderStudentView() : renderStaffView()}
-        </main>
+        {/* Fluid Native Mobile App Container */}
+        <div className="flex-1 w-full max-w-md mx-auto bg-stone-50 min-h-screen shadow-2xl border-x border-stone-300 flex flex-col relative">
+          {/* Mobile Header */}
+          <Header />
 
-        {/* Mobile Bottom Navigation Bar */}
-        <div className="shrink-0">
-          <MobileNavBar />
+          {/* Scrollable Mobile View Content */}
+          <main className="flex-1 pb-20 px-4 sm:px-5 pt-4">
+            {role === "student" ? renderStudentView() : renderStaffView()}
+          </main>
+
+          {/* Sticky Mobile Bottom Navigation Bar */}
+          <div className="sticky bottom-0 z-30">
+            <MobileNavBar />
+          </div>
+
+          {/* Global Modals & Drawers */}
+          <NotificationDrawer />
+          <RegisterFoundItemModal />
+          <ClaimVerificationModal />
         </div>
-        {/* Global Modals & Drawers scoped to container */}
-        <NotificationDrawer />
-        <RegisterFoundItemModal />
-        <ClaimVerificationModal />
       </div>
+    );
+  }
+
+  // Desktop View Layout
+  return (
+    <div className="min-h-screen bg-stone-50 text-stone-800 flex flex-col font-sans selection:bg-blue-800 selection:text-white">
+      {/* Device Mode Switcher Top Bar */}
+      <DeviceFrameSwitcher />
+
+      {/* Full Desktop Header */}
+      <Header />
+
+      {/* Main Desktop Container */}
+      <main className="flex-1 pb-16 pt-6 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+        {role === "student" ? renderStudentView() : renderStaffView()}
+      </main>
+
+      {/* Desktop Footer */}
+      <Footer />
+
+      {/* Global Modals & Drawers */}
+      <NotificationDrawer />
+      <RegisterFoundItemModal />
+      <ClaimVerificationModal />
     </div>
   );
 };

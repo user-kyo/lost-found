@@ -114,10 +114,11 @@ export const StaffFoundInventory: React.FC = () => {
               className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
             >
               <option value="all">All Item Statuses</option>
-              <option value="unclaimed">Unclaimed</option>
-              <option value="claim_pending">Claim Pending</option>
-              <option value="ready_for_retrieval">Ready for Retrieval</option>
-              <option value="claimed">Claimed & Released</option>
+              <option value="received">Received (Stage 1)</option>
+              <option value="verified">Verified (Stage 2)</option>
+              <option value="published">Published (Stage 3)</option>
+              <option value="claim_pending">Claim Pending (Stage 4)</option>
+              <option value="released">Released (Stage 5 - Final)</option>
             </select>
           </div>
 
@@ -210,12 +211,16 @@ export const StaffFoundInventory: React.FC = () => {
                       {/* Status */}
                       <td className="px-4 py-3.5">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                          item.status === "unclaimed"
-                            ? "bg-stone-100 text-stone-700 border border-stone-200"
-                            : item.status === "claim_pending"
+                          item.status === "received"
                             ? "bg-amber-100 text-amber-800 border border-amber-200"
-                            : item.status === "ready_for_retrieval"
-                            ? "bg-blue-100 text-blue-800 border border-blue-200 animate-pulse"
+                            : item.status === "verified"
+                            ? "bg-blue-100 text-blue-800 border border-blue-200"
+                            : item.status === "published"
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                            : item.status === "claim_pending"
+                            ? "bg-purple-100 text-purple-800 border border-purple-200 animate-pulse"
+                            : item.status === "released"
+                            ? "bg-stone-900 text-white border border-stone-800"
                             : "bg-stone-200 text-stone-600"
                         }`}>
                           {item.status.replace(/_/g, " ")}
@@ -278,12 +283,16 @@ export const StaffFoundInventory: React.FC = () => {
                     <div className="flex items-center justify-between gap-1">
                       <span className="font-mono font-bold text-xs text-stone-900">{item.id}</span>
                       <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
-                        item.status === "unclaimed"
-                          ? "bg-stone-100 text-stone-700 border border-stone-200"
-                          : item.status === "claim_pending"
+                        item.status === "received"
                           ? "bg-amber-100 text-amber-800 border border-amber-200"
-                          : item.status === "ready_for_retrieval"
+                          : item.status === "verified"
                           ? "bg-blue-100 text-blue-800 border border-blue-200"
+                          : item.status === "published"
+                          ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                          : item.status === "claim_pending"
+                          ? "bg-purple-100 text-purple-800 border border-purple-200"
+                          : item.status === "released"
+                          ? "bg-stone-900 text-white border border-stone-800"
                           : "bg-stone-200 text-stone-600"
                       }`}>
                         {item.status.replace(/_/g, " ")}

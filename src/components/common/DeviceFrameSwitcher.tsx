@@ -21,12 +21,12 @@ export const DeviceFrameSwitcher: React.FC = () => {
               {role === "student" ? (
                 <>
                   <User className="w-3 h-3 inline shrink-0" />
-                  <span>Citizen Portal</span>
+                  <span>Claimant Portal</span>
                 </>
               ) : (
                 <>
                   <Shield className="w-3 h-3 inline shrink-0" />
-                  <span>LGU Officer Portal</span>
+                  <span>Guidance Office Portal</span>
                 </>
               )}
             </span>

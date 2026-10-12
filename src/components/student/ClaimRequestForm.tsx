@@ -11,7 +11,8 @@ import {
   Mail, 
   Phone, 
   Lock,
-  ArrowRight
+  ArrowRight,
+  ShieldAlert
 } from "lucide-react";
 
 export const ClaimRequestForm: React.FC = () => {
@@ -50,6 +51,26 @@ export const ClaimRequestForm: React.FC = () => {
     );
   }
 
+  if (selectedItem.status === "claim_pending") {
+    return (
+      <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
+        <div className="w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mx-auto">
+          <ShieldAlert className="w-6 h-6" />
+        </div>
+        <h2 className="text-lg font-bold text-stone-900">Item Currently Under Verification</h2>
+        <p className="text-stone-600 text-xs">
+          An active claim is already pending verification for this item by Guidance staff. The system restricts claims to one active claim per item.
+        </p>
+        <button
+          onClick={() => setStudentView("search")}
+          className="px-5 py-2.5 bg-stone-900 text-white rounded-xl text-xs font-bold"
+        >
+          Return to Catalog
+        </button>
+      </div>
+    );
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -73,10 +94,12 @@ export const ClaimRequestForm: React.FC = () => {
           setSelectedClaim(data.claim);
           setStudentView("claim_tracking");
         } else {
-          alert("Failed to submit claim.");
+          const errData = await res.json().catch(() => null);
+          alert(errData?.error || "Failed to submit claim. Only 1 active claim per item is allowed.");
         }
       } catch (err) {
         console.error(err);
+        alert("An error occurred while submitting your claim.");
       } finally {
         setIsSubmitting(false);
       }
