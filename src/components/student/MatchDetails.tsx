@@ -6,14 +6,17 @@ import {
   CheckCircle2, 
   FileText,
   ArrowRight,
-  MapPin
+  MapPin,
+  Lock,
+  ShieldAlert
 } from "lucide-react";
 
 export const MatchDetails: React.FC = () => {
   const { 
     selectedItem, 
     lastSubmittedReport, 
-    setStudentView
+    setStudentView,
+    claims
   } = useApp();
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -202,13 +205,41 @@ export const MatchDetails: React.FC = () => {
 
           {/* Action CTA */}
           <div className="pt-2">
-            <button
-              onClick={() => setIsConfirmModalOpen(true)}
-              className="w-full py-3.5 px-6 bg-blue-800 hover:bg-blue-900 text-white font-bold text-sm rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-98"
-            >
-              <span>Request Item Verification</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            {selectedItem.status === "claim_pending" || claims.some(c => c.itemId === selectedItem.id && !["rejected", "released", "cancelled"].includes(c.status)) ? (
+              <div className="space-y-2">
+                <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span><strong>Active Claim Pending:</strong> Another citizen claim is currently undergoing Guidance verification for this item. System limits to 1 active claim per item.</span>
+                </div>
+                <button
+                  disabled
+                  className="w-full py-3.5 px-6 bg-stone-200 text-stone-500 font-bold text-sm rounded-2xl cursor-not-allowed flex items-center justify-center space-x-2"
+                >
+                  <Lock className="w-4 h-4" />
+                  <span>Claim Under Review (Limit: 1 Active Claim)</span>
+                </button>
+              </div>
+            ) : selectedItem.status === "released" ? (
+              <div className="space-y-2">
+                <div className="p-3.5 rounded-2xl bg-stone-100 border border-stone-200 text-stone-700 text-xs text-center font-medium">
+                  Item has already been officially released to its owner.
+                </div>
+                <button
+                  disabled
+                  className="w-full py-3.5 px-6 bg-stone-200 text-stone-500 font-bold text-sm rounded-2xl cursor-not-allowed flex items-center justify-center space-x-2"
+                >
+                  <span>Item Already Released (Closed)</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsConfirmModalOpen(true)}
+                className="w-full py-3.5 px-6 bg-blue-800 hover:bg-blue-900 text-white font-bold text-sm rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-98"
+              >
+                <span>Request Item Verification</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
       </div>

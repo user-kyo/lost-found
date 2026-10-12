@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
-import { ShieldCheck, MessageSquare, Check, X, FileText, User, Handshake, LayoutDashboard } from "lucide-react";
+import { ShieldCheck, MessageSquare, Check, X, FileText, User, Handshake, LayoutDashboard, Award } from "lucide-react";
 import { ChatWidget } from "../common/ChatWidget";
+import { ReleaseHandoverModal } from "../staff/ReleaseHandoverModal";
 
 export const AdminClaims: React.FC = () => {
-  const { user, claims, setClaims } = useApp();
+  const { user, claims, approveClaim, rejectClaim, verifyRFIDAndRelease } = useApp();
   const [localClaims, setLocalClaims] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [handoverModal, setHandoverModal] = useState<any>(null);
+  const [activeReleaseClaim, setActiveReleaseClaim] = useState<any>(null);
+  const [viewReceiptOnly, setViewReceiptOnly] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -20,28 +22,52 @@ export const AdminClaims: React.FC = () => {
       }));
       setLocalClaims(displayClaims);
       setLoading(false);
-    }, 600);
+    }, 400);
     return () => clearTimeout(timer);
   }, [claims]);
 
-  const handleAction = (claimId: string, action: "approve" | "reject") => {
+  const handleAction = async (claimId: string, action: "approve" | "reject") => {
     if (!confirm(`Are you sure you want to ${action} this claim?`)) return;
 
-    // We can just update local claims for demonstration
-    setLocalClaims(prev => prev.map(c => 
-      c.id === claimId ? { ...c, status: action === 'approve' ? 'approved' : 'rejected' } : c
-    ));
-    alert(`Claim ${action}d successfully!`);
+    if (action === "reject") {
+      const reason = prompt("Enter claim rejection reason:") || "Claimant proof does not match private verification details.";
+      if (user?.token) {
+        try {
+          await fetch(`/api/admin/claims/${claimId}/decision`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${user.token}`
+            },
+            body: JSON.stringify({ action: "reject", rejectReason: reason })
+          });
+        } catch (e) { /* ignore */ }
+      }
+      rejectClaim(claimId, reason, user?.fullName || "Guidance Officer");
+      setLocalClaims(prev => prev.map(c => 
+        c.id === claimId ? { ...c, status: "rejected" } : c
+      ));
+      alert("Claim rejected. Strict transition applied: Item status reverted from claim_pending to published!");
+    } else {
+      if (user?.token) {
+        try {
+          await fetch(`/api/admin/claims/${claimId}/decision`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${user.token}`
+            },
+            body: JSON.stringify({ action: "approve" })
+          });
+        } catch (e) { /* ignore */ }
+      }
+      approveClaim(claimId, user?.fullName || "Guidance Officer");
+      setLocalClaims(prev => prev.map(c => 
+        c.id === claimId ? { ...c, status: "approved" } : c
+      ));
+      alert("Claim approved! Scheduled for physical release at Guidance Office.");
+    }
   };
-
-  const handleCompleteHandover = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLocalClaims(prev => prev.map(c => 
-      c.id === handoverModal.claimId ? { ...c, status: 'completed' } : c
-    ));
-    alert(`Handover complete and logged!`);
-    setHandoverModal(null);
-  }
 
   return (
     <div className="w-full space-y-6 sm:space-y-8 animate-in fade-in duration-700 pb-8 relative">
@@ -148,17 +174,32 @@ export const AdminClaims: React.FC = () => {
                 )}
                 {claim.status === "approved" && (
                   <button
-                    onClick={() => setHandoverModal({ claimId: claim.id, claimantName: claim.owner?.fullName })}
+                    onClick={() => {
+                      setActiveReleaseClaim(claim);
+                      setViewReceiptOnly(false);
+                    }}
                     className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center space-x-2 shadow-[0_0_20px_-5px_rgba(37,99,235,0.4)] transition-all active:scale-[0.98]"
                   >
                     <Handshake className="w-5 h-5 text-blue-200" />
-                    <span>Log Handover</span>
+                    <span>Execute Official Release</span>
                   </button>
                 )}
-                {claim.status === "completed" && (
-                  <div className="px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-200/60 text-sm font-bold flex items-center shadow-sm">
-                    <Check className="w-4 h-4 mr-1.5" />
-                    Handover Completed
+                {(claim.status === "released" || claim.status === "completed") && (
+                  <div className="flex items-center space-x-2">
+                    <div className="px-4 py-2.5 bg-emerald-50 text-emerald-800 rounded-2xl border border-emerald-200/80 text-xs font-bold flex items-center shadow-xs">
+                      <Check className="w-4 h-4 mr-1.5 text-emerald-600" />
+                      <span>Released (Final)</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setActiveReleaseClaim(claim);
+                        setViewReceiptOnly(true);
+                      }}
+                      className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-2xl border border-stone-200 text-xs font-bold flex items-center space-x-1.5 transition-colors"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-stone-500" />
+                      <span>View Release Receipt</span>
+                    </button>
                   </div>
                 )}
               </div>
@@ -167,45 +208,19 @@ export const AdminClaims: React.FC = () => {
         </div>
       )}
 
-      {/* Handover Modal */}
-      {handoverModal && (
-        <div className="fixed inset-0 z-[100] bg-stone-900/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <form onSubmit={handleCompleteHandover} className="bg-white rounded-[2rem] shadow-2xl max-w-lg w-full p-8 space-y-6 animate-in zoom-in-95 duration-200 border border-stone-200">
-            <div>
-              <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 border border-blue-100">
-                <Handshake className="w-6 h-6" />
-              </div>
-              <h2 className="text-2xl font-extrabold text-stone-900">Log Physical Handover</h2>
-              <p className="text-sm text-stone-500 mt-1 font-medium">Verify the claimant's physical ID at the LGU desk.</p>
-            </div>
-
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <div>
-                <label className="block text-xs font-bold text-stone-500 mb-1.5 uppercase tracking-wider ml-1">Claimant Name (on ID)</label>
-                <input type="text" required value={handoverModal.claimantName} onChange={e => setHandoverModal({ ...handoverModal, claimantName: e.target.value })} className="w-full px-4 py-3 text-sm rounded-2xl border-2 border-stone-100 focus:border-blue-600 focus:bg-white bg-stone-50 outline-hidden transition-all shadow-inner" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-stone-500 mb-1.5 uppercase tracking-wider ml-1">ID Type Presented</label>
-                <select required value={handoverModal.claimantIdType || ""} onChange={e => setHandoverModal({ ...handoverModal, claimantIdType: e.target.value })} className="w-full px-4 py-3 text-sm rounded-2xl border-2 border-stone-100 focus:border-blue-600 focus:bg-white bg-stone-50 outline-hidden transition-all shadow-inner font-medium">
-                  <option value="">Select ID...</option>
-                  <option value="National ID">National ID</option>
-                  <option value="Driver's License">Driver's License</option>
-                  <option value="Passport">Passport</option>
-                  <option value="Postal ID">Postal ID</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-stone-500 mb-1.5 uppercase tracking-wider ml-1">Verification Questions Asked</label>
-                <input type="text" required value={handoverModal.questionsAsked || ""} onChange={e => setHandoverModal({ ...handoverModal, questionsAsked: e.target.value })} placeholder="e.g. Asked what was inside the pocket" className="w-full px-4 py-3 text-sm rounded-2xl border-2 border-stone-100 focus:border-blue-600 focus:bg-white bg-stone-50 outline-hidden transition-all shadow-inner" />
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 pt-6">
-              <button type="button" onClick={() => setHandoverModal(null)} className="w-full sm:w-auto px-6 py-3.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-2xl text-sm font-bold transition-colors">Cancel</button>
-              <button type="submit" className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all"><Handshake className="w-5 h-5" /> <span>Confirm Handover</span></button>
-            </div>
-          </form>
-        </div>
+      {/* Official Guidance Release & Handover Modal */}
+      {activeReleaseClaim && (
+        <ReleaseHandoverModal
+          claim={activeReleaseClaim}
+          isOpen={!!activeReleaseClaim}
+          viewReceiptOnly={viewReceiptOnly}
+          onClose={() => setActiveReleaseClaim(null)}
+          onSuccess={(record) => {
+            setLocalClaims(prev => prev.map(c => 
+              c.id === activeReleaseClaim.id ? { ...c, status: "released", releaseRecord: record } : c
+            ));
+          }}
+        />
       )}
     </div>
   );

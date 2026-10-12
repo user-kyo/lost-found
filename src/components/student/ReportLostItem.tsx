@@ -96,9 +96,10 @@ export const ReportLostItem: React.FC = () => {
       setIsListening(true);
       setTimeout(() => {
         const randomPrompt = SAMPLE_PROMPTS[0];
-        setDescription(prev => prev ? `${prev} ${randomPrompt}` : randomPrompt);
+        const newDesc = description ? `${description} ${randomPrompt}` : randomPrompt;
+        setDescription(newDesc);
         setIsListening(false);
-        handleRunNLP(prev => prev ? `${prev} ${randomPrompt}` : randomPrompt);
+        handleRunNLP(newDesc);
       }, 2000);
       return;
     }
