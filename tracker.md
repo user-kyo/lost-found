@@ -27,14 +27,22 @@ This document tracks the implementation status of all core functionalities withi
 - [x] **Chat Threads:** Secure messaging between claimants and admins/finders.
 - [x] **Database Persistence:** Messages and threads are correctly stored and retrieved.
 
+### 5. Policy & Operational Governance
+- [x] **Authoritative Holding Period:** 45 school days verified and confirmed in SQLite `system_configurations` (approved by Guidance Board).
+- [x] **Guidance Office Identity-Verification Procedures:** Approved policy `LC-GO-IVP-2026.1` institutionalized with multi-tier credential acceptance and receipt acknowledgment.
+- [x] **Unclaimed Item Disposition Rules:** Approved rules `LC-GO-UIDR-2026.1` enforcing 45 school days custody, 5-point document checklist certification, and statutory 6-month civil separation.
+- [x] **Centralized Status Transitions:** Validated across items and claims with concurrency locks preventing race conditions.
+- [x] **Audit Logging:** Non-destructive immutable logging across system configurations, status transitions, and document operations.
+
 ---
 
 ## 🟡 Partially Working / Using Fallbacks
 
 ### 1. NLP (Natural Language Processing)
-- [ ] **Attribute Extraction:** Currently relying on a Node.js Regex/Rule-based fallback. Connection to the Python TF-IDF engine (`/api/nlp/extract`) is failing or bypassed.
-- [ ] **Smart Search Ranking:** Search works but returns an unranked list of available items. Python TF-IDF sorting (`/api/search`) needs fixing.
-- [ ] **Match Scoring:** The "Similarity Score" UI uses a hardcoded fallback (e.g., 50% Medium Confidence) due to the Python server disconnection (`/api/nlp/match-analyze`).
+- [x] **TF-IDF Model Persistence:** Python hybrid TF-IDF vectorizer and database matrix are persisted to disk via `joblib` at `backend/data/tfidf_model.joblib`.
+- [x] **Bilingual Keyword-Matching Fallback:** Node.js fallback now loads `backend/data/lexicon_fil_en.csv` with bidirectional English-Tagalog token expansion (`pitaka` $\leftrightarrow$ `wallet`, `susi` $\leftrightarrow$ `key`, `itim` $\leftrightarrow$ `black`) and weighted field scoring (Category: 35, Color: 25, Area: 15, Description: 20).
+- [x] **Match Scoring & Similarity Analysis:** `/api/nlp/match-analyze` endpoint implemented with bilingual fallback returning structured confidence, similarity scores, and discrepancy protections.
+- [ ] **Dual Service Orchestration:** Python FastAPI process runs standalone on port 8000; Node fallback provides full offline resilience when Python process is unlaunched.
 
 ### 2. Image Handling
 - [ ] **Image Uploads:** The database accepts Image URLs, but there is no Cloudinary/S3 integration for uploading physical photos from a mobile device camera.
@@ -55,6 +63,7 @@ This document tracks the implementation status of all core functionalities withi
 ---
 
 ## Next Steps / Priorities
-1. Troubleshoot and connect the Python NLP engine to replace Node.js fallbacks.
-2. Implement Cloudinary for image uploads.
-3. Add Socket.io for real-time chat updates.
+1. Run automated launcher daemon for Python NLP FastAPI engine alongside TypeScript Node server.
+2. Implement Cloudinary/S3 storage adapter for mobile item photo uploads.
+3. Add Socket.io for real-time claim updates and messaging.
+
