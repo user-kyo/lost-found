@@ -125,18 +125,18 @@ export const RFIDScannerModal: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 <button
                   onClick={() => handleSimulateBadgeTap("CTZ-2026-4402", "LF-RET-9412")}
-                  className="p-3 rounded-xl border border-stone-200 hover:border-emerald-700 bg-stone-50 hover:bg-emerald-50 text-left transition-all space-y-0.5"
+                  className="p-3 rounded-xl border border-stone-200 hover:border-blue-700 bg-stone-50 hover:bg-blue-50 text-left transition-all space-y-0.5"
                 >
                   <p className="font-bold text-stone-900">Alex Hayes</p>
                   <p className="text-[10px] text-stone-500">CTZ-2026-4402 (AirPods)</p>
-                  <span className="inline-block text-[10px] text-emerald-800 font-semibold bg-emerald-100/70 px-1.5 py-0.5 rounded">
+                  <span className="inline-block text-[10px] text-blue-800 font-semibold bg-blue-100/70 px-1.5 py-0.5 rounded">
                     Ready in BOX-A: C1
                   </span>
                 </button>
 
                 <button
                   onClick={() => handleSimulateBadgeTap("CTZ-2026-8941")}
-                  className="p-3 rounded-xl border border-stone-200 hover:border-emerald-700 bg-stone-50 hover:bg-emerald-50 text-left transition-all space-y-0.5"
+                  className="p-3 rounded-xl border border-stone-200 hover:border-blue-700 bg-stone-50 hover:bg-blue-50 text-left transition-all space-y-0.5"
                 >
                   <p className="font-bold text-stone-900">Maya Lin</p>
                   <p className="text-[10px] text-stone-500">CTZ-2026-8941 (Backpack)</p>
@@ -160,7 +160,7 @@ export const RFIDScannerModal: React.FC = () => {
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold"
+                  className="px-4 py-2 bg-blue-800 hover:bg-blue-900 text-white rounded-xl text-xs font-bold"
                 >
                   Verify
                 </button>
@@ -172,12 +172,12 @@ export const RFIDScannerModal: React.FC = () => {
         {/* Success State */}
         {scanResult.status === "success" && (
           <div className="space-y-5 py-2">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto animate-bounce">
+            <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center mx-auto animate-bounce">
               <Unlock className="w-8 h-8" />
             </div>
 
             <div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 uppercase">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 uppercase">
                 Lock Disengaged
               </span>
               <h3 className="text-xl font-black text-stone-900 mt-2">
@@ -199,7 +199,7 @@ export const RFIDScannerModal: React.FC = () => {
                 setScanResult({ status: "idle", message: "" });
                 setIsScannerModalOpen(false);
               }}
-              className="w-full py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs rounded-xl shadow-xs"
+              className="w-full py-2.5 bg-blue-800 hover:bg-blue-900 text-white font-bold text-xs rounded-xl shadow-xs"
             >
               Finish Retrieval Session
             </button>

@@ -19,8 +19,8 @@ import {
   INITIAL_NOTIFICATIONS
 } from "../data/mockData";
 
-export type StudentNavView = "home" | "report" | "report_found" | "search" | "reports" | "claims" | "match_details" | "claim_request" | "claim_tracking";
-export type StaffNavView = "dashboard" | "found_items" | "lost_reports" | "ai_matches" | "claim_requests" | "storage_box" | "audit_logs";
+export type StudentNavView = "home" | "report" | "report_lost" | "report_found" | "search" | "reports" | "claims" | "match_details" | "claim_request" | "claim_tracking" | "settings";
+export type StaffNavView = "dashboard" | "found_items" | "lost_reports" | "ai_matches" | "claim_requests" | "storage_box" | "audit_logs" | "settings";
 export type ScreenMode = "desktop" | "mobile";
 
 interface AppContextType {
@@ -132,32 +132,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Persistent or initial state
   const [foundItems, setFoundItems] = useState<FoundItem[]>(() => {
-    const saved = localStorage.getItem("slf_found_items_v2");
+    const saved = localStorage.getItem("slf_found_items_v3");
     return saved ? JSON.parse(saved) : INITIAL_FOUND_ITEMS;
   });
 
   const [lostReports, setLostReports] = useState<LostReport[]>(() => {
-    const saved = localStorage.getItem("slf_lost_reports_v2");
+    const saved = localStorage.getItem("slf_lost_reports_v3");
     return saved ? JSON.parse(saved) : INITIAL_LOST_REPORTS;
   });
 
   const [claims, setClaims] = useState<ClaimRequest[]>(() => {
-    const saved = localStorage.getItem("slf_claims_v2");
+    const saved = localStorage.getItem("slf_claims_v3");
     return saved ? JSON.parse(saved) : INITIAL_CLAIMS;
   });
 
   const [storageBoxes, setStorageBoxes] = useState<StorageBoxUnit[]>(() => {
-    const saved = localStorage.getItem("slf_storage_boxes_v2");
+    const saved = localStorage.getItem("slf_storage_boxes_v3");
     return saved ? JSON.parse(saved) : INITIAL_STORAGE_BOXES;
   });
 
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(() => {
-    const saved = localStorage.getItem("slf_audit_logs_v2");
+    const saved = localStorage.getItem("slf_audit_logs_v3");
     return saved ? JSON.parse(saved) : INITIAL_AUDIT_LOGS;
   });
 
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
-    const saved = localStorage.getItem("slf_notifications_v2");
+    const saved = localStorage.getItem("slf_notifications_v3");
     return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
   });
 
@@ -174,27 +174,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem("slf_found_items_v2", JSON.stringify(foundItems));
+    localStorage.setItem("slf_found_items_v3", JSON.stringify(foundItems));
   }, [foundItems]);
 
   useEffect(() => {
-    localStorage.setItem("slf_lost_reports_v2", JSON.stringify(lostReports));
+    localStorage.setItem("slf_lost_reports_v3", JSON.stringify(lostReports));
   }, [lostReports]);
 
   useEffect(() => {
-    localStorage.setItem("slf_claims_v2", JSON.stringify(claims));
+    localStorage.setItem("slf_claims_v3", JSON.stringify(claims));
   }, [claims]);
 
   useEffect(() => {
-    localStorage.setItem("slf_storage_boxes_v2", JSON.stringify(storageBoxes));
+    localStorage.setItem("slf_storage_boxes_v3", JSON.stringify(storageBoxes));
   }, [storageBoxes]);
 
   useEffect(() => {
-    localStorage.setItem("slf_audit_logs_v2", JSON.stringify(auditLogs));
+    localStorage.setItem("slf_audit_logs_v3", JSON.stringify(auditLogs));
   }, [auditLogs]);
 
   useEffect(() => {
-    localStorage.setItem("slf_notifications_v2", JSON.stringify(notifications));
+    localStorage.setItem("slf_notifications_v3", JSON.stringify(notifications));
   }, [notifications]);
 
   // Actions

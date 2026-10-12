@@ -33,7 +33,7 @@ export const StaffLostReports: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-stone-500 mb-1">
-            <button onClick={() => setStaffView("dashboard")} className="hover:text-emerald-800">LGU Dashboard</button>
+            <button onClick={() => setStaffView("dashboard")} className="hover:text-blue-800">LGU Dashboard</button>
             <span>/</span>
             <span className="text-stone-900 font-semibold">Citizen Lost Reports</span>
           </div>
@@ -55,7 +55,7 @@ export const StaffLostReports: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search report ID, student name, description..."
-            className="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+            className="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
           />
         </div>
 
@@ -63,7 +63,7 @@ export const StaffLostReports: React.FC = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+            className="px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
           >
             <option value="all">All Report Statuses ({lostReports.length})</option>
             <option value="submitted">Submitted</option>
@@ -92,7 +92,7 @@ export const StaffLostReports: React.FC = () => {
                 </span>
                 <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                   report.status === "matched"
-                    ? "bg-emerald-100 text-emerald-800"
+                    ? "bg-blue-100 text-blue-800"
                     : report.status === "claim_submitted"
                     ? "bg-amber-100 text-amber-800"
                     : "bg-stone-100 text-stone-700"
@@ -125,7 +125,7 @@ export const StaffLostReports: React.FC = () => {
               </div>
               <div>
                 <span className="text-stone-400 text-[10px] uppercase font-bold block">NLP Confidence</span>
-                <span className="font-semibold text-emerald-800">{report.extractedAttributes.confidence}</span>
+                <span className="font-semibold text-blue-800">{report.extractedAttributes.confidence}</span>
               </div>
             </div>
 

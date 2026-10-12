@@ -24,7 +24,7 @@ export const MatchDetails: React.FC = () => {
         <p className="text-stone-500 text-sm">No item selected.</p>
         <button
           onClick={() => setStudentView("search")}
-          className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-semibold"
+          className="px-4 py-2 bg-blue-800 text-white rounded-xl text-xs font-semibold"
         >
           Return to Matches
         </button>
@@ -46,7 +46,7 @@ export const MatchDetails: React.FC = () => {
       <div className="flex items-center justify-between">
         <button
           onClick={() => setStudentView("search")}
-          className="inline-flex items-center space-x-1.5 text-xs font-bold text-stone-600 hover:text-emerald-800 transition-colors"
+          className="inline-flex items-center space-x-1.5 text-xs font-bold text-stone-600 hover:text-blue-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Possible Matches</span>
@@ -72,13 +72,13 @@ export const MatchDetails: React.FC = () => {
             <div className="absolute bottom-4 left-4 right-4">
               <div className="p-3 rounded-xl bg-stone-900/85 backdrop-blur-md text-white border border-white/10 text-xs flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4 text-emerald-400" />
+                  <MapPin className="w-4 h-4 text-blue-400" />
                   <div>
                     <p className="font-bold text-[11px]">Found in San Pablo City</p>
                     <p className="text-[10px] text-stone-300">{selectedItem.foundLocation || selectedItem.areaFound}</p>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 text-[10px] font-bold">
                   PUBLIC POST
                 </span>
               </div>
@@ -113,7 +113,7 @@ export const MatchDetails: React.FC = () => {
         {/* Right Column (7 Cols): Comprehensive Comparison, Matching Attributes, CTA */}
         <div className="lg:col-span-7 space-y-6">
           <div>
-            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
+            <span className="text-xs font-bold text-blue-800 uppercase tracking-wider">
               Item Match Details
             </span>
             <h1 className="text-2xl font-extrabold text-stone-900 mt-1">
@@ -135,7 +135,7 @@ export const MatchDetails: React.FC = () => {
               {/* Left Box: Your Description */}
               <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-2">
                 <div className="flex items-center space-x-1.5 text-xs font-bold text-stone-900">
-                  <FileText className="w-3.5 h-3.5 text-emerald-800" />
+                  <FileText className="w-3.5 h-3.5 text-blue-800" />
                   <span>Your Description</span>
                 </div>
                 <p className="text-xs text-stone-700 italic leading-relaxed">
@@ -170,21 +170,21 @@ export const MatchDetails: React.FC = () => {
             </div>
 
             {/* Confirmed Overlap Checklist */}
-            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2">
-              <span className="text-xs font-bold text-emerald-900 block">
+            <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200 space-y-2">
+              <span className="text-xs font-bold text-blue-900 block">
                 Public Similarity Clues
               </span>
-              <ul className="space-y-1.5 text-xs text-emerald-800">
+              <ul className="space-y-1.5 text-xs text-blue-800">
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-blue-700 shrink-0" />
                   <span><strong>{selectedItem.color} color profile</strong> directly aligns with your report</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-blue-700 shrink-0" />
                   <span><strong>{selectedItem.brand} brand</strong> matches citizen loss statement</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-blue-700 shrink-0" />
                   <span><strong>Public description:</strong> {selectedItem.description || selectedItem.publicDescription}</span>
                 </li>
               </ul>
@@ -193,7 +193,7 @@ export const MatchDetails: React.FC = () => {
 
           {/* Verification Protocol Notice */}
           <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex items-start space-x-3 text-xs text-stone-600 leading-relaxed">
-            <ShieldCheck className="w-5 h-5 text-emerald-800 shrink-0 mt-0.5" />
+            <ShieldCheck className="w-5 h-5 text-blue-800 shrink-0 mt-0.5" />
             <div>
               <span className="font-bold text-stone-900">Next Step: </span>
               If this matches your lost item, submit a claim request. You will be asked to provide identifying proof during LGU verification, without receiving hints from private finder details.
@@ -204,7 +204,7 @@ export const MatchDetails: React.FC = () => {
           <div className="pt-2">
             <button
               onClick={() => setIsConfirmModalOpen(true)}
-              className="w-full py-3.5 px-6 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-sm rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-98"
+              className="w-full py-3.5 px-6 bg-blue-800 hover:bg-blue-900 text-white font-bold text-sm rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-98"
             >
               <span>Request Item Verification</span>
               <ArrowRight className="w-4 h-4" />
@@ -215,9 +215,9 @@ export const MatchDetails: React.FC = () => {
 
       {/* Confirmation Dialog Before Submitting Claim */}
       {isConfirmModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/50 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-stone-200 space-y-5">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 flex items-center justify-center mx-auto">
+        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-[2rem] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-stone-200 space-y-5">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-800 flex items-center justify-center mx-auto">
               <ShieldCheck className="w-6 h-6" />
             </div>
 
@@ -246,7 +246,7 @@ export const MatchDetails: React.FC = () => {
               <button
                 type="button"
                 onClick={handleProceedToClaim}
-                className="w-1/2 py-2.5 px-4 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center space-x-1"
+                className="w-1/2 py-2.5 px-4 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center space-x-1"
               >
                 <span>Continue to Claim Form</span>
                 <ArrowRight className="w-3.5 h-3.5" />

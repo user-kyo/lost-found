@@ -73,7 +73,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ claimId }) => {
       {/* Header */}
       <div className="bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between">
         <h3 className="text-sm font-bold text-stone-900">Encrypted Chat</h3>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800 bg-blue-100 px-2 py-0.5 rounded">
           {thread.status}
         </span>
       </div>
@@ -101,7 +101,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ claimId }) => {
                 </div>
                 <div className={`px-4 py-2 rounded-2xl max-w-[85%] text-sm ${
                   isMe 
-                    ? "bg-emerald-800 text-white rounded-tr-none" 
+                    ? "bg-blue-800 text-white rounded-tr-none" 
                     : msg.isStaff
                       ? "bg-indigo-100 text-indigo-900 border border-indigo-200 rounded-tl-none"
                       : "bg-white border border-stone-200 text-stone-800 rounded-tl-none"
@@ -144,7 +144,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ claimId }) => {
           )}
           <form onSubmit={sendMessage} className="p-3 flex items-center space-x-2">
             <label
-              className="p-2 text-stone-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+              className="p-2 text-stone-400 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
               title="Attach Image"
             >
               <ImageIcon className="w-5 h-5" />
@@ -171,12 +171,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ claimId }) => {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder={imageUrl ? "Add a caption..." : "Type a message..."}
-              className="flex-1 px-3 py-2 bg-stone-100 border border-stone-200 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+              className="flex-1 px-3 py-2 bg-stone-100 border border-stone-200 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-700"
             />
             <button
               type="submit"
               disabled={!newMessage.trim() && !imageUrl}
-              className="p-2 bg-emerald-800 text-white rounded-lg hover:bg-emerald-900 disabled:opacity-50 transition-colors"
+              className="p-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 disabled:opacity-50 transition-colors"
             >
               <Send className="w-4 h-4" />
             </button>

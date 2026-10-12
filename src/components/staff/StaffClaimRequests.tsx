@@ -13,7 +13,8 @@ import {
   ChevronRight, 
   Sparkles,
   Lock,
-  QrCode
+  QrCode,
+  Filter
 } from "lucide-react";
 
 export const StaffClaimRequests: React.FC = () => {
@@ -46,67 +47,71 @@ export const StaffClaimRequests: React.FC = () => {
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <div className="flex items-center space-x-2 text-xs text-stone-500 mb-1">
-            <button onClick={() => setStaffView("dashboard")} className="hover:text-emerald-800">LGU Dashboard</button>
-            <span>/</span>
-            <span className="text-stone-900 font-semibold">Claim Verification Queue</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
-            Claim Verification Queue
+          <h1 className="text-3xl md:text-4xl font-extrabold text-stone-900 tracking-tight">
+            Review Queue
           </h1>
-          <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
+          <p className="text-sm md:text-base text-stone-500 mt-2 max-w-2xl">
             Review citizen ownership proofs, inspect stored items, and authorize smart locker retrieval passes.
           </p>
         </div>
 
         <button
           onClick={() => setIsScannerModalOpen(true)}
-          className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-1.5 self-start sm:self-auto"
+          className="px-5 py-3 bg-stone-900 hover:bg-stone-800 text-white text-sm font-bold rounded-2xl shadow-sm transition-all flex items-center justify-center space-x-2 w-full md:w-auto active:scale-95"
         >
-          <QrCode className="w-4 h-4" />
-          <span>Launch RFID Kiosk Station</span>
+          <QrCode className="w-5 h-5" />
+          <span>Launch Kiosk</span>
         </button>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+      <div className="bg-white/70 backdrop-blur-md border border-stone-200/50 rounded-[2rem] p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="relative w-full md:w-96">
+          <Search className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search claimant, ID, item #..."
-            className="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+            className="w-full pl-11 pr-4 py-3 text-sm rounded-2xl border-none bg-stone-100/50 text-stone-800 placeholder:text-stone-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-stone-900 transition-all shadow-inner"
           />
         </div>
 
-        <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
-          >
-            <option value="all">All Claim Statuses ({claims.length})</option>
-            <option value="pending_review">Pending Review</option>
-            <option value="under_verification">Under Verification</option>
-            <option value="ready_for_retrieval">Ready for Retrieval</option>
-            <option value="released">Released & Closed</option>
-            <option value="rejected">Rejected</option>
-          </select>
+        <div className="flex items-center space-x-2 w-full md:w-auto">
+          <div className="relative w-full md:w-auto">
+            <Filter className="w-4 h-4 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full md:w-auto pl-10 pr-10 py-3 text-sm font-medium rounded-2xl border-none bg-stone-100/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-stone-900 appearance-none cursor-pointer transition-all shadow-inner"
+            >
+              <option value="all">All Claims ({claims.length})</option>
+              <option value="pending_review">Pending Review</option>
+              <option value="under_verification">Under Verification</option>
+              <option value="ready_for_retrieval">Ready for Retrieval</option>
+              <option value="released">Released & Closed</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <ChevronRight className="w-4 h-4 text-stone-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none rotate-90" />
+          </div>
         </div>
       </div>
 
       {/* Claim Requests List */}
       <div className="space-y-4">
         {filteredClaims.length === 0 ? (
-          <div className="bg-white border border-stone-200/80 rounded-3xl p-12 text-center text-stone-400 space-y-3">
-            <ShieldCheck className="w-8 h-8 mx-auto text-stone-300" />
-            <p className="text-sm font-semibold text-stone-700">No claims match the filter criteria.</p>
+          <div className="bg-white/50 backdrop-blur-sm border border-stone-200/50 rounded-[2rem] p-16 text-center text-stone-400 flex flex-col items-center justify-center">
+            <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+              <ShieldCheck className="w-10 h-10 text-stone-300" />
+            </div>
+            <h3 className="text-xl font-bold text-stone-700 mb-2">No claims found</h3>
+            <p className="text-sm text-stone-500 max-w-md">
+              There are no claims matching your current filter criteria.
+            </p>
           </div>
         ) : (
           filteredClaims.map((claim) => {
@@ -116,101 +121,110 @@ export const StaffClaimRequests: React.FC = () => {
             return (
               <div
                 key={claim.id}
-                className="bg-white border border-stone-200/80 rounded-2xl p-5 sm:p-6 shadow-2xs hover:shadow-xs transition-all space-y-4"
+                className="group bg-white/70 backdrop-blur-md border border-stone-200/50 rounded-[2rem] p-6 md:p-8 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col md:flex-row gap-6 relative overflow-hidden"
               >
-                {/* Header Row */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
-                  <div className="flex items-center space-x-2.5">
-                    <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2 py-0.5 rounded-md">
-                      Claim #{claim.id}
-                    </span>
-                    <span className="text-xs font-bold text-stone-800">
-                      {claim.claimantName} ({claim.claimantId})
-                    </span>
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                      claim.status === "ready_for_retrieval"
-                        ? "bg-emerald-100 text-emerald-800 border border-emerald-200 animate-pulse"
-                        : claim.status === "released"
-                        ? "bg-stone-100 text-stone-700"
-                        : claim.status === "rejected"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-amber-100 text-amber-800 border border-amber-200"
-                    }`}>
-                      {claim.status.replace(/_/g, " ")}
-                    </span>
-                  </div>
-
-                  <span className="text-xs text-stone-400 font-mono">
-                    Submitted: {new Date(claim.submittedDate).toLocaleDateString()}
-                  </span>
-                </div>
-
-                {/* Body Content */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-                  {/* Left Column: Target Item Info */}
-                  <div className="md:col-span-4 flex items-start space-x-3 bg-stone-50/80 p-3.5 rounded-xl border border-stone-200/70">
-                    {item && (
+                {/* Left Side: Item Visual */}
+                <div className="shrink-0 flex flex-col items-center justify-center space-y-3">
+                  {item ? (
+                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl overflow-hidden shadow-inner border border-stone-200/50">
                       <img
                         src={item.imageUrl}
                         alt={item.title}
                         referrerPolicy="no-referrer"
-                        className="w-14 h-14 rounded-lg object-cover border border-stone-200 shrink-0"
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                       />
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-bold text-emerald-800 uppercase block">
-                        Target Item #{claim.itemId}
-                      </span>
-                      <p className="text-xs font-bold text-stone-900 truncate mt-0.5">
-                        {item?.title || claim.itemId}
-                      </p>
-                      <p className="text-[11px] text-stone-500">
-                        {item?.storageBoxId} • Slot {item?.storageSlotId}
-                      </p>
-                      <div className="mt-1 flex items-center space-x-1 text-[10px] text-emerald-800 font-semibold">
-                        <Sparkles className="w-3 h-3" />
-                        <span>AI Match Score: {claim.similarityScore}%</span>
-                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-stone-100 flex items-center justify-center shadow-inner border border-stone-200/50">
+                      <Package className="w-8 h-8 text-stone-300" />
+                    </div>
+                  )}
+                  
+                  {isPending ? (
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200 w-full text-center">
+                      Action Required
+                    </span>
+                  ) : (
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-full text-center ${
+                      claim.status === "ready_for_retrieval"
+                        ? "bg-blue-100 text-blue-800 border border-blue-200"
+                        : claim.status === "released"
+                        ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                        : claim.status === "rejected"
+                        ? "bg-red-100 text-red-800 border border-red-200"
+                        : "bg-stone-100 text-stone-700"
+                    }`}>
+                      {claim.status.replace(/_/g, " ")}
+                    </span>
+                  )}
+                </div>
 
-                  {/* Right Column: Submitted Proofs */}
-                  <div className="md:col-span-8 space-y-2 text-xs">
-                    <div>
-                      <span className="text-stone-400 text-[11px] uppercase font-bold block">Claimant Stated Proof:</span>
-                      <p className="text-stone-800 bg-stone-50 p-2.5 rounded-xl border border-stone-200/60 leading-relaxed font-medium mt-1">
+                {/* Right Side: Details & Actions */}
+                <div className="flex-1 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
+                      <div>
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="text-xs font-bold text-stone-400 bg-stone-100 px-2 py-0.5 rounded-md">
+                            #{claim.id.split('-')[0]}
+                          </span>
+                          <span className="text-xs text-stone-500 font-medium">
+                            {new Date(claim.submittedDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-stone-900 leading-tight">
+                          {claim.claimantName}
+                        </h3>
+                        <p className="text-sm text-stone-500 mt-1 flex items-center">
+                          <User className="w-4 h-4 mr-1.5" />
+                          ID: {claim.claimantId}
+                        </p>
+                      </div>
+                      
+                      {item && (
+                        <div className="bg-stone-50 rounded-2xl p-3 border border-stone-200/50 text-right w-full md:w-auto">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Target Item</p>
+                          <p className="text-sm font-bold text-stone-900 truncate max-w-[150px]">{item.title}</p>
+                          <p className="text-xs text-stone-500">{item.storageBoxId} • {item.storageSlotId}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/50">
+                      <p className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Submitted Proof</p>
+                      <p className="text-sm text-stone-800 font-medium italic">
                         "{claim.proofOfOwnership}"
                       </p>
                     </div>
+                  </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-stone-500">
-                      <span>Contact: {claim.contactEmail} • {claim.contactPhone}</span>
+                  {/* Actions & Meta */}
+                  <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4 pt-4 border-t border-stone-100/80">
+                    <div className="flex items-center gap-4 text-xs">
                       {claim.retrievalCode && (
-                        <span className="font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                          Retrieval Pass: {claim.retrievalCode}
-                        </span>
+                        <div className="flex items-center text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200/50 font-bold">
+                          <Lock className="w-3.5 h-3.5 mr-1.5" />
+                          Pass: {claim.retrievalCode}
+                        </div>
                       )}
+                      <div className="flex items-center text-stone-500 font-medium">
+                        <Sparkles className="w-3.5 h-3.5 text-blue-500 mr-1.5" />
+                        Match Score: <span className="font-bold text-stone-800 ml-1">{claim.similarityScore}%</span>
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                {/* Actions Bar */}
-                <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
-                  <div className="text-xs text-stone-400">
-                    {claim.reviewedBy ? (
-                      <span>Reviewed by {claim.reviewedBy}</span>
-                    ) : (
-                      <span>Awaiting personnel decision</span>
-                    )}
+                    <button
+                      onClick={() => handleOpenVerify(claim)}
+                      className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all flex items-center justify-center space-x-2 active:scale-95 ${
+                        isPending 
+                          ? "bg-blue-600 hover:bg-blue-700 text-white shadow-sm" 
+                          : "bg-stone-100 hover:bg-stone-200 text-stone-800"
+                      }`}
+                    >
+                      <span>{isPending ? "Review Claim" : "View Details"}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
                   </div>
-
-                  <button
-                    onClick={() => handleOpenVerify(claim)}
-                    className="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-2xs active:scale-98"
-                  >
-                    <span>{isPending ? "Inspect & Verify Claim" : "View Decision Details"}</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
             );
@@ -220,3 +234,4 @@ export const StaffClaimRequests: React.FC = () => {
     </div>
   );
 };
+

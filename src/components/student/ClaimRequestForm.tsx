@@ -42,7 +42,7 @@ export const ClaimRequestForm: React.FC = () => {
         <p className="text-stone-500 text-sm">No item selected for claim.</p>
         <button
           onClick={() => setStudentView("search")}
-          className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-semibold"
+          className="px-4 py-2 bg-blue-800 text-white rounded-xl text-xs font-semibold"
         >
           Return to Catalog
         </button>
@@ -91,7 +91,7 @@ export const ClaimRequestForm: React.FC = () => {
       <div>
         <button
           onClick={() => setStudentView("match_details")}
-          className="inline-flex items-center space-x-1.5 text-xs font-bold text-stone-600 hover:text-emerald-800 mb-3 transition-colors"
+          className="inline-flex items-center space-x-1.5 text-xs font-bold text-stone-600 hover:text-blue-800 mb-3 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Match Comparison</span>
@@ -114,7 +114,7 @@ export const ClaimRequestForm: React.FC = () => {
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
-            <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wider">
               Item #{selectedItem.id}
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
@@ -144,7 +144,7 @@ export const ClaimRequestForm: React.FC = () => {
         {/* Section 1: Claimant Info */}
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-stone-900 pb-2 border-b border-stone-100 flex items-center space-x-2">
-            <User className="w-4 h-4 text-emerald-800" />
+            <User className="w-4 h-4 text-blue-800" />
             <span>1. Claimant Information</span>
           </h3>
 
@@ -158,7 +158,7 @@ export const ClaimRequestForm: React.FC = () => {
                 required
                 value={claimantName}
                 onChange={(e) => setClaimantName(e.target.value)}
-                className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden bg-stone-50/50"
+                className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-blue-700 focus:outline-hidden bg-stone-50/50"
               />
             </div>
 
@@ -171,7 +171,7 @@ export const ClaimRequestForm: React.FC = () => {
                 required
                 value={claimantId}
                 onChange={(e) => setClaimantId(e.target.value)}
-                className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden bg-stone-50/50"
+                className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-blue-700 focus:outline-hidden bg-stone-50/50"
               />
             </div>
 
@@ -184,7 +184,7 @@ export const ClaimRequestForm: React.FC = () => {
                 required
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
-                className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden bg-stone-50/50"
+                className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-blue-700 focus:outline-hidden bg-stone-50/50"
               />
             </div>
 
@@ -196,7 +196,7 @@ export const ClaimRequestForm: React.FC = () => {
                 type="tel"
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
-                className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden bg-stone-50/50"
+                className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-blue-700 focus:outline-hidden bg-stone-50/50"
               />
             </div>
           </div>
@@ -205,7 +205,7 @@ export const ClaimRequestForm: React.FC = () => {
         {/* Section 2: Detailed Proof of Ownership */}
         <div className="space-y-4 pt-2">
           <h3 className="text-sm font-bold text-stone-900 pb-2 border-b border-stone-100 flex items-center space-x-2">
-            <Lock className="w-4 h-4 text-emerald-800" />
+            <Lock className="w-4 h-4 text-blue-800" />
             <span>2. Verifiable Proof of Ownership</span>
           </h3>
 
@@ -220,7 +220,7 @@ export const ClaimRequestForm: React.FC = () => {
                 value={proofOfOwnership}
                 onChange={(e) => setProofOfOwnership(e.target.value)}
                 placeholder="Describe items inside, serial number digits, lock codes, unique scratch locations, or names written inside..."
-                className="w-full rounded-2xl border border-stone-200 p-3.5 text-xs text-stone-800 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden leading-relaxed bg-stone-50/50"
+                className="w-full rounded-2xl border border-stone-200 p-3.5 text-xs text-stone-800 focus:ring-2 focus:ring-blue-700 focus:outline-hidden leading-relaxed bg-stone-50/50"
               />
               <p className="text-[11px] text-stone-500 mt-1">
                 LGU officers will check these details against the finder/private record and the physical item before approving.
@@ -245,7 +245,7 @@ export const ClaimRequestForm: React.FC = () => {
                       reader.readAsDataURL(file);
                     }
                   }}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-emerald-700 focus:outline-hidden bg-stone-50/50 file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 file:cursor-pointer cursor-pointer"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-200 focus:ring-2 focus:ring-blue-700 focus:outline-hidden bg-stone-50/50 file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-800 hover:file:bg-blue-100 file:cursor-pointer cursor-pointer"
                 />
                 {supportingImageUrl && (
                   <div className="relative inline-block self-start">
@@ -276,7 +276,7 @@ export const ClaimRequestForm: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-6 py-2.5 bg-emerald-800 hover:bg-emerald-900 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center space-x-1.5 active:scale-98"
+            className="px-6 py-2.5 bg-blue-800 hover:bg-blue-900 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center space-x-1.5 active:scale-98"
           >
             <span>{isSubmitting ? "Submitting..." : "Submit Claim Request"}</span>
             <ArrowRight className="w-4 h-4" />

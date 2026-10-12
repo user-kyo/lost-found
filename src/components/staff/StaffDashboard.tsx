@@ -70,7 +70,7 @@ export const StaffDashboard: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => setIsRegisterModalOpen(true)}
-            className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-1.5 active:scale-98"
+            className="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-1.5 active:scale-98"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Register Found Item</span>
@@ -91,7 +91,7 @@ export const StaffDashboard: React.FC = () => {
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-stone-200 shadow-2xs space-y-1.5 sm:space-y-2 min-w-0">
           <div className="flex items-center justify-between text-stone-400">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider truncate">Total Found</span>
-            <Package className="w-4 h-4 text-emerald-800 shrink-0" />
+            <Package className="w-4 h-4 text-blue-800 shrink-0" />
           </div>
           <p className="text-xl sm:text-2xl font-extrabold text-stone-900">{totalFound}</p>
           <span className="text-[10px] text-stone-500 block truncate">Cataloged in database</span>
@@ -118,18 +118,18 @@ export const StaffDashboard: React.FC = () => {
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-stone-200 shadow-2xs space-y-1.5 sm:space-y-2 min-w-0">
           <div className="flex items-center justify-between text-stone-400">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider truncate">Released</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-blue-700 shrink-0" />
           </div>
-          <p className="text-xl sm:text-2xl font-extrabold text-emerald-800">{itemsReleased + 24}</p>
+          <p className="text-xl sm:text-2xl font-extrabold text-blue-800">{itemsReleased + 24}</p>
           <span className="text-[10px] text-stone-500 block truncate">Claimed & retrieved</span>
         </div>
 
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-stone-200 shadow-2xs space-y-1.5 sm:space-y-2 col-span-2 sm:col-span-1 min-w-0">
           <div className="flex items-center justify-between text-stone-400">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider truncate">Verification</span>
-            <UserCheck className="w-4 h-4 text-emerald-800 shrink-0" />
+            <UserCheck className="w-4 h-4 text-blue-800 shrink-0" />
           </div>
-          <p className="text-xl sm:text-2xl font-extrabold text-emerald-900">{pendingVerificationCount}</p>
+          <p className="text-xl sm:text-2xl font-extrabold text-blue-900">{pendingVerificationCount}</p>
           <span className="text-[10px] text-stone-500 block truncate">Action required</span>
         </div>
       </div>
@@ -151,7 +151,7 @@ export const StaffDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <span className="self-start sm:self-auto px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-100 text-emerald-900">
+              <span className="self-start sm:self-auto px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-blue-100 text-blue-900">
                 Live NLP Engine Active
               </span>
             </div>
@@ -162,10 +162,10 @@ export const StaffDashboard: React.FC = () => {
                 <p className="text-lg sm:text-xl font-bold text-stone-900 mt-0.5">28</p>
                 <span className="text-[10px] text-stone-500 block truncate">Evaluated pairings</span>
               </div>
-              <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 min-w-0">
-                <span className="text-emerald-900 block text-[9px] sm:text-[10px] uppercase font-bold truncate">High Confidence</span>
-                <p className="text-lg sm:text-xl font-bold text-emerald-950 mt-0.5">12</p>
-                <span className="text-[10px] text-emerald-800 block truncate">&gt;85% correlation</span>
+              <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-200 min-w-0">
+                <span className="text-blue-900 block text-[9px] sm:text-[10px] uppercase font-bold truncate">High Confidence</span>
+                <p className="text-lg sm:text-xl font-bold text-blue-950 mt-0.5">12</p>
+                <span className="text-[10px] text-blue-800 block truncate">&gt;85% correlation</span>
               </div>
               <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 min-w-0">
                 <span className="text-amber-900 block text-[9px] sm:text-[10px] uppercase font-bold truncate">Pending Review</span>
@@ -194,7 +194,7 @@ export const StaffDashboard: React.FC = () => {
                         className="p-3 sm:p-3.5 rounded-xl border border-stone-200 bg-stone-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
                       >
                         <div className="flex items-center space-x-3 min-w-0">
-                          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-900 flex items-center justify-center font-bold shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-900 flex items-center justify-center font-bold shrink-0">
                             {claim.similarityScore}%
                           </div>
                           <div className="min-w-0 flex-1">
@@ -212,7 +212,7 @@ export const StaffDashboard: React.FC = () => {
                             setSelectedClaim(claim);
                             setIsVerifyModalOpen(true);
                           }}
-                          className="w-full sm:w-auto shrink-0 px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-xs font-bold transition-colors shadow-2xs text-center"
+                          className="w-full sm:w-auto shrink-0 px-3.5 py-1.5 bg-blue-800 hover:bg-blue-900 text-white rounded-lg text-xs font-bold transition-colors shadow-2xs text-center"
                         >
                           Verify Claim
                         </button>
@@ -228,12 +228,12 @@ export const StaffDashboard: React.FC = () => {
           <div className="bg-white border border-stone-200 rounded-3xl p-6 sm:p-7 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-stone-100">
               <div className="flex items-center space-x-2">
-                <Activity className="w-4 h-4 text-emerald-800" />
+                <Activity className="w-4 h-4 text-blue-800" />
                 <h3 className="text-base font-bold text-stone-900">Real-Time Operational Activity</h3>
               </div>
               <button
                 onClick={() => setStaffView("audit_logs")}
-                className="text-xs font-bold text-emerald-800 hover:text-emerald-950"
+                className="text-xs font-bold text-blue-800 hover:text-blue-950"
               >
                 View Full Audit Trail
               </button>
@@ -242,7 +242,7 @@ export const StaffDashboard: React.FC = () => {
             <div className="divide-y divide-stone-100">
               {auditLogs.slice(0, 5).map((log) => (
                 <div key={log.id} className="py-3 flex items-start space-x-3 text-xs">
-                  <div className="w-2 h-2 rounded-full bg-emerald-800 mt-1.5 shrink-0" />
+                  <div className="w-2 h-2 rounded-full bg-blue-800 mt-1.5 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-stone-900">{log.action.replace(/_/g, " ")}</span>
@@ -266,11 +266,11 @@ export const StaffDashboard: React.FC = () => {
           <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-xs space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-stone-100">
               <div className="flex items-center space-x-2">
-                <HardDrive className="w-5 h-5 text-emerald-800" />
+                <HardDrive className="w-5 h-5 text-blue-800" />
                 <h3 className="text-base font-bold text-stone-900">Smart Storage Unit</h3>
               </div>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-900">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1 animate-pulse" />
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-900">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mr-1 animate-pulse" />
                 Online
               </span>
             </div>
@@ -294,7 +294,7 @@ export const StaffDashboard: React.FC = () => {
                     key={slot.id}
                     className={`h-7 rounded-md text-[10px] font-bold flex items-center justify-center border transition-all ${
                       slot.status === "available"
-                        ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+                        ? "bg-blue-50 border-blue-300 text-blue-800"
                         : slot.status === "reserved"
                         ? "bg-amber-50 border-amber-300 text-amber-800"
                         : "bg-stone-200 border-stone-300 text-stone-800"
@@ -307,7 +307,7 @@ export const StaffDashboard: React.FC = () => {
 
               <div className="flex items-center justify-between text-[11px] text-stone-600 pt-1">
                 <span>Occupied: 4 slots</span>
-                <span className="text-emerald-800 font-bold">Available: 5 slots</span>
+                <span className="text-blue-800 font-bold">Available: 5 slots</span>
               </div>
             </div>
 
@@ -330,7 +330,7 @@ export const StaffDashboard: React.FC = () => {
                     key={slot.id}
                     className={`h-7 rounded-md text-[10px] font-bold flex items-center justify-center border transition-all ${
                       slot.status === "available"
-                        ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+                        ? "bg-blue-50 border-blue-300 text-blue-800"
                         : slot.status === "reserved"
                         ? "bg-amber-50 border-amber-300 text-amber-800"
                         : "bg-stone-200 border-stone-300 text-stone-800"
@@ -343,7 +343,7 @@ export const StaffDashboard: React.FC = () => {
 
               <div className="flex items-center justify-between text-[11px] text-stone-600 pt-1">
                 <span>Occupied: 3 slots</span>
-                <span className="text-emerald-800 font-bold">Available: 6 slots</span>
+                <span className="text-blue-800 font-bold">Available: 6 slots</span>
               </div>
             </div>
 
@@ -351,7 +351,7 @@ export const StaffDashboard: React.FC = () => {
             <div className="p-3.5 rounded-xl bg-stone-100 border border-stone-200 space-y-1.5 text-xs text-stone-700">
               <div className="flex items-center justify-between">
                 <span className="text-stone-500 text-[11px]">System Lock Status:</span>
-                <span className="font-bold text-emerald-800 flex items-center space-x-1">
+                <span className="font-bold text-blue-800 flex items-center space-x-1">
                   <Lock className="w-3 h-3" />
                   <span>All Doors Secured</span>
                 </span>
@@ -362,7 +362,7 @@ export const StaffDashboard: React.FC = () => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-stone-500 text-[11px]">RFID Reader:</span>
-                <span className="font-bold text-emerald-800">Ready for Badge Tap</span>
+                <span className="font-bold text-blue-800">Ready for Badge Tap</span>
               </div>
             </div>
 

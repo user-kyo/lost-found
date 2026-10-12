@@ -55,7 +55,7 @@ export const StaffFoundInventory: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-stone-500 mb-1">
-            <button onClick={() => setStaffView("dashboard")} className="hover:text-emerald-800">LGU Dashboard</button>
+            <button onClick={() => setStaffView("dashboard")} className="hover:text-blue-800">LGU Dashboard</button>
             <span>/</span>
             <span className="text-stone-900 font-semibold">Found Inventory</span>
           </div>
@@ -70,7 +70,7 @@ export const StaffFoundInventory: React.FC = () => {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setIsRegisterModalOpen(true)}
-            className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-1.5 active:scale-98"
+            className="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-1.5 active:scale-98"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Register New Item</span>
@@ -88,7 +88,7 @@ export const StaffFoundInventory: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search ID, title, brand, color..."
-              className="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+              className="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
             />
           </div>
 
@@ -96,7 +96,7 @@ export const StaffFoundInventory: React.FC = () => {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+              className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
             >
               <option value="all">All Categories</option>
               <option value="Bags & Backpacks">Bags & Backpacks</option>
@@ -111,7 +111,7 @@ export const StaffFoundInventory: React.FC = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+              className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
             >
               <option value="all">All Item Statuses</option>
               <option value="unclaimed">Unclaimed</option>
@@ -125,7 +125,7 @@ export const StaffFoundInventory: React.FC = () => {
             <select
               value={boxFilter}
               onChange={(e) => setBoxFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+              className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
             >
               <option value="all">All Storage Lockers</option>
               <option value="BOX-A">Unit A (City Hall Lobby)</option>
@@ -136,7 +136,7 @@ export const StaffFoundInventory: React.FC = () => {
 
         <div className="flex items-center justify-between text-xs text-stone-500 pt-1 border-t border-stone-100">
           <span>Showing {filteredItems.length} of {foundItems.length} cataloged items</span>
-          <span className="text-emerald-700 font-medium">Auto-synced with IoT Smart Lockers</span>
+          <span className="text-blue-700 font-medium">Auto-synced with IoT Smart Lockers</span>
         </div>
       </div>
 
@@ -196,7 +196,7 @@ export const StaffFoundInventory: React.FC = () => {
                       {/* Locker Compartment */}
                       <td className="px-4 py-3.5">
                         <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-stone-100 border border-stone-200 text-stone-800 font-semibold font-mono text-[11px]">
-                          <HardDrive className="w-3.5 h-3.5 text-emerald-700" />
+                          <HardDrive className="w-3.5 h-3.5 text-blue-700" />
                           <span>{item.storageBoxId} : {item.storageSlotId}</span>
                         </div>
                       </td>
@@ -215,7 +215,7 @@ export const StaffFoundInventory: React.FC = () => {
                             : item.status === "claim_pending"
                             ? "bg-amber-100 text-amber-800 border border-amber-200"
                             : item.status === "ready_for_retrieval"
-                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200 animate-pulse"
+                            ? "bg-blue-100 text-blue-800 border border-blue-200 animate-pulse"
                             : "bg-stone-200 text-stone-600"
                         }`}>
                           {item.status.replace(/_/g, " ")}
@@ -239,7 +239,7 @@ export const StaffFoundInventory: React.FC = () => {
                                 setSelectedClaim(relatedClaim);
                                 setIsVerifyModalOpen(true);
                               }}
-                              className="px-2.5 py-1 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-[11px] font-semibold transition-colors shadow-2xs"
+                              className="px-2.5 py-1 bg-blue-800 hover:bg-blue-900 text-white rounded-lg text-[11px] font-semibold transition-colors shadow-2xs"
                             >
                               Verify
                             </button>
@@ -283,7 +283,7 @@ export const StaffFoundInventory: React.FC = () => {
                           : item.status === "claim_pending"
                           ? "bg-amber-100 text-amber-800 border border-amber-200"
                           : item.status === "ready_for_retrieval"
-                          ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                          ? "bg-blue-100 text-blue-800 border border-blue-200"
                           : "bg-stone-200 text-stone-600"
                       }`}>
                         {item.status.replace(/_/g, " ")}
@@ -296,7 +296,7 @@ export const StaffFoundInventory: React.FC = () => {
 
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-2 border-t border-stone-100">
                   <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-stone-100 font-mono text-[11px] text-stone-700">
-                    <HardDrive className="w-3 h-3 text-emerald-700" />
+                    <HardDrive className="w-3 h-3 text-blue-700" />
                     <span>{item.storageBoxId}:{item.storageSlotId}</span>
                   </div>
 
@@ -314,7 +314,7 @@ export const StaffFoundInventory: React.FC = () => {
                           setSelectedClaim(relatedClaim);
                           setIsVerifyModalOpen(true);
                         }}
-                        className="px-3 py-1 bg-emerald-800 text-white rounded-lg text-xs font-semibold shadow-xs"
+                        className="px-3 py-1 bg-blue-800 text-white rounded-lg text-xs font-semibold shadow-xs"
                       >
                         Verify Claim
                       </button>
@@ -336,7 +336,7 @@ export const StaffFoundInventory: React.FC = () => {
             </div>
 
             <div>
-              <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Storage Barcode & Label</span>
+              <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wider">Storage Barcode & Label</span>
               <h3 className="text-base font-bold text-stone-900 mt-0.5">{selectedQrItem.title}</h3>
               <p className="text-xs text-stone-500 font-mono">ID: {selectedQrItem.id}</p>
             </div>

@@ -49,12 +49,12 @@ export const ClaimVerificationModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in">
-      <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 my-8 space-y-6">
+    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in">
+      <div className="bg-white rounded-[2rem] max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 my-8 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-stone-100">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -107,25 +107,25 @@ export const ClaimVerificationModal: React.FC = () => {
           </div>
 
           {/* Student Submitted Proof Card */}
-          <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 space-y-3">
+          <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800">
                 Claimant Stated Proof
               </span>
-              <span className="px-2 py-0.5 rounded-md bg-emerald-800 text-white font-bold text-[10px]">
+              <span className="px-2 py-0.5 rounded-md bg-blue-800 text-white font-bold text-[10px]">
                 {selectedClaim.similarityScore}% AI Vector Score
               </span>
             </div>
 
             <div className="space-y-2 text-stone-800">
-              <div className="bg-white/80 p-3 rounded-xl border border-emerald-100 space-y-1">
+              <div className="bg-white/80 p-3 rounded-xl border border-blue-100 space-y-1">
                 <span className="text-[10px] font-bold text-stone-400 uppercase block">Proof of Ownership Description:</span>
                 <p className="font-semibold text-stone-900 leading-relaxed">
                   "{selectedClaim.proofOfOwnership}"
                 </p>
               </div>
 
-              <div className="p-2.5 bg-white/80 rounded-xl border border-emerald-100 space-y-1 text-[11px]">
+              <div className="p-2.5 bg-white/80 rounded-xl border border-blue-100 space-y-1 text-[11px]">
                 <p>Claimant: <strong>{selectedClaim.claimantName}</strong> ({selectedClaim.claimantId})</p>
                 <p>Email: <strong>{selectedClaim.contactEmail}</strong></p>
                 <p>Phone: <strong>{selectedClaim.contactPhone}</strong></p>
@@ -136,8 +136,8 @@ export const ClaimVerificationModal: React.FC = () => {
 
         {/* Decision Forms */}
         {selectedClaim.status === "ready_for_retrieval" ? (
-          <div className="p-4 rounded-2xl bg-emerald-100 text-emerald-900 space-y-2 text-xs text-center">
-            <CheckCircle2 className="w-6 h-6 mx-auto text-emerald-700" />
+          <div className="p-4 rounded-2xl bg-blue-100 text-blue-900 space-y-2 text-xs text-center">
+            <CheckCircle2 className="w-6 h-6 mx-auto text-blue-700" />
             <p className="font-bold">This claim was already APPROVED and authorized for smart locker release.</p>
             <p className="text-[11px] font-mono">Retrieval Pass Code: <strong>{selectedClaim.retrievalCode}</strong></p>
           </div>
@@ -170,7 +170,7 @@ export const ClaimVerificationModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleApprove}
-                      className="px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-xl text-xs shadow-xs transition-colors flex items-center space-x-1.5"
+                      className="px-5 py-2.5 bg-blue-800 hover:bg-blue-900 text-white font-bold rounded-xl text-xs shadow-xs transition-colors flex items-center space-x-1.5"
                     >
                       <CheckCircle2 className="w-4 h-4" />
                       <span>Approve Claim & Issue Retrieval Code</span>

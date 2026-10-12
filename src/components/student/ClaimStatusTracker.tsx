@@ -22,7 +22,7 @@ export const ClaimStatusTracker: React.FC = () => {
         <p className="text-stone-500 text-sm">No claim selected for tracking.</p>
         <button
           onClick={() => setStudentView("claims")}
-          className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-semibold"
+          className="px-4 py-2 bg-blue-800 text-white rounded-xl text-xs font-semibold"
         >
           View My Claims
         </button>
@@ -70,7 +70,7 @@ export const ClaimStatusTracker: React.FC = () => {
       <div className="flex items-center justify-between">
         <button
           onClick={() => setStudentView("claims")}
-          className="inline-flex items-center space-x-1.5 text-xs font-bold text-stone-600 hover:text-emerald-800 transition-colors"
+          className="inline-flex items-center space-x-1.5 text-xs font-bold text-stone-600 hover:text-blue-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to All Claims</span>
@@ -90,7 +90,7 @@ export const ClaimStatusTracker: React.FC = () => {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${selectedClaim.status === "ready_for_retrieval"
-                  ? "bg-emerald-100 text-emerald-800 animate-pulse"
+                  ? "bg-blue-100 text-blue-800 animate-pulse"
                   : selectedClaim.status === "released"
                     ? "bg-stone-100 text-stone-700"
                     : selectedClaim.status === "rejected"
@@ -122,7 +122,7 @@ export const ClaimStatusTracker: React.FC = () => {
               }}
               className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold rounded-xl transition-colors flex items-center space-x-1 border border-stone-200"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-800" />
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-800" />
               <span>LGU Verification View</span>
             </button>
           </div>
@@ -140,7 +140,7 @@ export const ClaimStatusTracker: React.FC = () => {
                 <div
                   key={step.key}
                   className={`p-3 rounded-2xl border transition-all flex flex-col justify-between min-w-0 ${status === "completed"
-                      ? "bg-emerald-50/70 border-emerald-200"
+                      ? "bg-blue-50/70 border-blue-200"
                       : status === "active"
                         ? "bg-amber-50 border-amber-300 ring-2 ring-amber-100"
                         : status === "failed"
@@ -151,13 +151,13 @@ export const ClaimStatusTracker: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-[10px] font-bold text-stone-400">0{idx + 1}</span>
-                      {status === "completed" && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />}
+                      {status === "completed" && <CheckCircle2 className="w-3.5 h-3.5 text-blue-700 shrink-0" />}
                       {status === "active" && <Clock className="w-3.5 h-3.5 text-amber-700 animate-spin shrink-0" />}
                       {status === "failed" && <XCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />}
                       {status === "upcoming" && <span className="w-2 h-2 rounded-full bg-stone-300 shrink-0" />}
                     </div>
                     <p className={`text-[11px] sm:text-xs font-bold leading-tight ${status === "completed"
-                        ? "text-emerald-900"
+                        ? "text-blue-900"
                         : status === "active"
                           ? "text-amber-900"
                           : status === "failed"
@@ -178,7 +178,7 @@ export const ClaimStatusTracker: React.FC = () => {
 
         {/* Ready for LGU Handover */}
         {(selectedClaim.status === "ready_for_retrieval" || selectedClaim.status === "approved") && (
-          <div className="p-4 sm:p-6 rounded-3xl bg-linear-to-br from-stone-900 via-stone-850 to-emerald-950 text-white shadow-xl space-y-4 border border-stone-800">
+          <div className="p-4 sm:p-6 rounded-3xl bg-linear-to-br from-stone-900 via-stone-850 to-blue-950 text-white shadow-xl space-y-4 border border-stone-800">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
               <div className="flex items-center space-x-3 min-w-0">
                 <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold shadow-md shrink-0">
@@ -218,7 +218,7 @@ export const ClaimStatusTracker: React.FC = () => {
         {/* Claim Review Details */}
         <div className="p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-3 text-xs">
           <h4 className="font-bold text-stone-900 flex items-center space-x-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-800" />
+            <ShieldCheck className="w-4 h-4 text-blue-800" />
             <span>Submitted Ownership Verification Record</span>
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-stone-600">

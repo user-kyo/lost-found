@@ -47,7 +47,7 @@ export const StaffAuditLogs: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-stone-500 mb-1">
-            <button onClick={() => setStaffView("dashboard")} className="hover:text-emerald-800">LGU Dashboard</button>
+            <button onClick={() => setStaffView("dashboard")} className="hover:text-blue-800">LGU Dashboard</button>
             <span>/</span>
             <span className="text-stone-900 font-semibold">Security & Audit Logs</span>
           </div>
@@ -77,7 +77,7 @@ export const StaffAuditLogs: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by staff name, student ID, item..."
-            className="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+            className="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
           />
         </div>
 
@@ -85,7 +85,7 @@ export const StaffAuditLogs: React.FC = () => {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            className="px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+            className="px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
           >
             <option value="all">All Operational Events ({auditLogs.length})</option>
             <option value="ITEM_REGISTERED">Item Registered</option>
@@ -143,7 +143,7 @@ export const StaffAuditLogs: React.FC = () => {
                     <td className="px-4 py-3.5 max-w-xs">
                       <p className="text-stone-700 leading-relaxed font-medium line-clamp-2">{log.details}</p>
                       {log.itemId && (
-                        <span className="text-[10px] font-mono text-emerald-800 font-bold mt-1 inline-block">
+                        <span className="text-[10px] font-mono text-blue-800 font-bold mt-1 inline-block">
                           Ref: #{log.itemId}
                         </span>
                       )}
@@ -156,7 +156,7 @@ export const StaffAuditLogs: React.FC = () => {
                     <td className="px-4 py-3.5 text-right">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         log.result === "Success"
-                          ? "bg-emerald-100 text-emerald-800"
+                          ? "bg-blue-100 text-blue-800"
                           : log.result === "Rejected"
                           ? "bg-red-100 text-red-800"
                           : "bg-amber-100 text-amber-800"
@@ -192,7 +192,7 @@ export const StaffAuditLogs: React.FC = () => {
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                   log.result === "Success"
-                    ? "bg-emerald-100 text-emerald-800"
+                    ? "bg-blue-100 text-blue-800"
                     : log.result === "Rejected"
                     ? "bg-red-100 text-red-800"
                     : "bg-amber-100 text-amber-800"
@@ -218,7 +218,7 @@ export const StaffAuditLogs: React.FC = () => {
               <div className="flex items-center justify-between text-[10px] text-stone-400 pt-1 border-t border-stone-100">
                 <span>Device: {log.device || "Kiosk Console"}</span>
                 {log.itemId && (
-                  <span className="font-mono text-emerald-800 font-bold">
+                  <span className="font-mono text-blue-800 font-bold">
                     Ref: #{log.itemId}
                   </span>
                 )}

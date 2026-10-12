@@ -33,7 +33,7 @@ export const StaffAIMatches: React.FC = () => {
       {/* Header */}
       <div>
         <div className="flex items-center space-x-2 text-xs text-stone-500 mb-1">
-          <button onClick={() => setStaffView("dashboard")} className="hover:text-emerald-800">LGU Dashboard</button>
+          <button onClick={() => setStaffView("dashboard")} className="hover:text-blue-800">LGU Dashboard</button>
           <span>/</span>
           <span className="text-stone-900 font-semibold">AI Match Engine</span>
         </div>
@@ -52,7 +52,7 @@ export const StaffAIMatches: React.FC = () => {
           <select
             value={selectedReportId}
             onChange={(e) => setSelectedReportId(e.target.value)}
-            className="px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
+            className="px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50/50 text-stone-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-700"
           >
             {lostReports.map(r => (
               <option key={r.id} value={r.id}>
@@ -64,7 +64,7 @@ export const StaffAIMatches: React.FC = () => {
 
         <div className="flex items-center space-x-3 text-xs">
           <span className="text-stone-500">Min. Similarity Threshold:</span>
-          <span className="font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+          <span className="font-mono font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
             {minConfidence}%
           </span>
           <input
@@ -73,7 +73,7 @@ export const StaffAIMatches: React.FC = () => {
             max="95"
             value={minConfidence}
             onChange={(e) => setMinConfidence(Number(e.target.value))}
-            className="accent-emerald-800"
+            className="accent-blue-800"
           />
         </div>
       </div>
@@ -140,7 +140,7 @@ export const StaffAIMatches: React.FC = () => {
             return (
               <div
                 key={item.id}
-                className="bg-white border border-stone-200/80 hover:border-emerald-700 rounded-3xl overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between"
+                className="bg-white border border-stone-200/80 hover:border-blue-700 rounded-3xl overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="relative aspect-4/3 bg-stone-100">
@@ -152,7 +152,7 @@ export const StaffAIMatches: React.FC = () => {
                     />
                     <div className="absolute top-3 left-3">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold text-white shadow-md ${
-                        score >= 85 ? "bg-emerald-800" : "bg-amber-700"
+                        score >= 85 ? "bg-blue-800" : "bg-amber-700"
                       }`}>
                         {score}% Vector Overlap
                       </span>
@@ -166,7 +166,7 @@ export const StaffAIMatches: React.FC = () => {
 
                   <div className="p-5 space-y-3">
                     <div>
-                      <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wider">
                         #{item.id} • {item.category}
                       </span>
                       <h4 className="text-base font-bold text-stone-900 mt-0.5">{item.title}</h4>
@@ -201,7 +201,7 @@ export const StaffAIMatches: React.FC = () => {
                         setStaffView("found_items");
                       }
                     }}
-                    className="w-full py-2 bg-emerald-50 hover:bg-emerald-800 text-emerald-800 hover:text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center space-x-1"
+                    className="w-full py-2 bg-blue-50 hover:bg-blue-800 text-blue-800 hover:text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center space-x-1"
                   >
                     <span>View Item & Claims</span>
                     <ChevronRight className="w-3.5 h-3.5" />

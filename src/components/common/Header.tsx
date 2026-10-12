@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
 import { 
   Shield, 
@@ -10,10 +10,11 @@ import {
   CheckCircle2, 
   Sparkles, 
   PlusCircle, 
-  ArrowRightLeft
+  LogOut
 } from "lucide-react";
 
 export const Header: React.FC = () => {
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { 
     user,
     logout,
@@ -31,256 +32,97 @@ export const Header: React.FC = () => {
   } = useApp();
 
   const unreadCount = notifications.filter(n => !n.read && (n.recipientRole === role || n.recipientRole === "all")).length;
-  const isOnline = storageBoxes.every(b => b.isOnline);
-  const isMobileLayout = screenMode === "mobile";
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200/80 shadow-2xs">
-      <div className={`${isMobileLayout ? "w-full px-3 py-2" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"}`}>
-        <div className="flex items-center justify-between h-14 sm:h-16">
-          {/* Logo & School/Civic Branding */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-stone-200/50 shadow-sm transition-all duration-300">
+      <div className="w-full px-3 py-2">
+        <div className="flex items-center justify-between h-14">
+          {/* Logo */}
+          <div className="flex items-center space-x-2">
             <button 
               onClick={() => {
                 if (role === "student") setStudentView("home");
                 else setStaffView("dashboard");
               }}
-              className="flex items-center space-x-2 sm:space-x-3 text-left group focus:outline-hidden"
+              className="flex items-center space-x-2 text-left group focus:outline-hidden"
             >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-800 flex items-center justify-center text-white shadow-xs group-hover:bg-emerald-900 transition-colors">
-                <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shrink-0">
+                <Shield className="w-4 h-4" />
               </div>
               <div>
                 <div className="flex items-center space-x-1.5">
-                  <span className="font-extrabold text-stone-900 text-sm sm:text-base tracking-tight group-hover:text-emerald-800 transition-colors">
+                  <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-stone-900 to-stone-600 text-sm tracking-tight">
                     BalikHub
                   </span>
-                  <span className="inline-flex items-center px-1.5 py-0.2 rounded-sm text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-amber-50 text-amber-600 border border-amber-200/50 uppercase tracking-widest shadow-sm">
                     LGU
                   </span>
                 </div>
-                {!isMobileLayout && (
-                  <p className="text-xs text-stone-500 hidden sm:block">
-                    Citizen & LGU Property Recovery Network
-                  </p>
-                )}
               </div>
             </button>
           </div>
 
-          {/* Center Navigation - For Desktop Mode Only */}
-          {!isMobileLayout && (
-            <nav className="hidden md:flex items-center space-x-1">
-              {role === "student" ? (
-                <>
-                  <button
-                    onClick={() => setStudentView("home")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      studentView === "home"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    Citizen Home
-                  </button>
-                  <button
-                    onClick={() => setStudentView("report")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
-                      studentView === "report"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Report Lost Item</span>
-                  </button>
-                  <button
-                    onClick={() => setStudentView("report_found")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
-                      studentView === "report_found"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Report Found Item</span>
-                  </button>
-                  {/* Find My Item removed to prevent catalog browsing scams */}
-                  <button
-                    onClick={() => setStudentView("reports")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      studentView === "reports" || studentView === "claims" || studentView === "claim_tracking"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    My Activity
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setStaffView("dashboard")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      staffView === "dashboard"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    LGU Review Queue
-                  </button>
-                  <button
-                    onClick={() => setStaffView("found_items")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      staffView === "found_items"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    Active Inventory
-                  </button>
-                  <button
-                    onClick={() => setStaffView("claims")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                      staffView === "claims" || staffView === "claim_requests"
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/70"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
-                    }`}
-                  >
-                    LGU Claims & Handover
-                  </button>
-                </>
-              )}
-            </nav>
-          )}
-
-          {/* Right Header Actions: Role Switcher & Notification Bell */}
-          <div className="flex items-center space-x-1.5 sm:space-x-3">
-            {/* Quick Action Button for Staff on Desktop */}
-            {!isMobileLayout && role === "staff" && (
-              <div className="hidden sm:flex items-center space-x-1.5">
-                <button
-                  onClick={() => setIsRegisterModalOpen(true)}
-                  className="px-2.5 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-xs font-semibold flex items-center space-x-1 shadow-2xs transition-colors"
-                >
-                  <PlusCircle className="w-3.5 h-3.5" />
-                  <span>Register Item</span>
-                </button>
-              </div>
-            )}
-
+          {/* Right Header Actions */}
+          <div className="flex items-center space-x-2">
             {/* Notification Bell */}
             <button
               onClick={() => setIsNotifDrawerOpen(true)}
-              className="relative p-1.5 sm:p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors focus:outline-hidden"
+              className="relative p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors focus:outline-hidden"
               title="Notifications"
             >
-              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 sm:w-4 sm:h-4 bg-amber-600 text-white font-bold text-[9px] sm:text-[10px] rounded-full flex items-center justify-center ring-2 ring-white">
+                <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-amber-600 text-white font-bold text-[10px] rounded-full flex items-center justify-center ring-2 ring-white">
                   {unreadCount}
                 </span>
               )}
             </button>
 
-            {/* Custom Language Toggle */}
-            <div className="flex items-center space-x-1 mr-2 bg-stone-100 rounded-lg p-0.5 border border-stone-200">
-              <button
-                onClick={() => {
-                  document.cookie = "googtrans=/en/en; path=/";
-                  document.cookie = "googtrans=/en/en; domain=" + window.location.hostname + "; path=/";
-                  window.location.reload();
-                }}
-                className={`px-2 py-1 text-[10px] font-bold rounded-md ${document.cookie.includes('/en/tl') ? 'text-stone-500 hover:bg-stone-200' : 'bg-white shadow-xs text-emerald-800'}`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => {
-                  document.cookie = "googtrans=/en/tl; path=/";
-                  document.cookie = "googtrans=/en/tl; domain=" + window.location.hostname + "; path=/";
-                  window.location.reload();
-                }}
-                className={`px-2 py-1 text-[10px] font-bold rounded-md ${document.cookie.includes('/en/tl') ? 'bg-white shadow-xs text-emerald-800' : 'text-stone-500 hover:bg-stone-200'}`}
-              >
-                TL
-              </button>
-            </div>
-
-            {/* Logout Button */}
+            {/* Logout */}
             <button
-              onClick={() => logout()}
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-[11px] sm:text-xs font-semibold transition-all border border-stone-200 shrink-0"
+              onClick={() => setShowLogoutConfirm(true)}
+              className="p-2 text-stone-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200 shrink-0"
               title="Sign Out"
             >
-              <User className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sign Out ({user?.fullName})</span>
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
         </div>
-
-        {/* Mobile Navigation Sub-Header (Only in Desktop Mode when window is narrow) */}
-        {!isMobileLayout && (
-          <div className="flex md:hidden overflow-x-auto py-2 border-t border-stone-100 space-x-1 no-scrollbar">
-            {role === "student" ? (
-              <>
-                <button
-                  onClick={() => setStudentView("home")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    studentView === "home" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  Citizen Home
-                </button>
-                <button
-                  onClick={() => setStudentView("report")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    studentView === "report" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  Report Lost Item
-                </button>
-                {/* Find My Item removed */}
-                <button
-                  onClick={() => setStudentView("reports")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    studentView === "reports" || studentView === "claims" || studentView === "claim_tracking" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  My Activity
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setStaffView("dashboard")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    staffView === "dashboard" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  LGU Review Queue
-                </button>
-                <button
-                  onClick={() => setStaffView("found_items")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    staffView === "found_items" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  Active Inventory
-                </button>
-                <button
-                  onClick={() => setStaffView("claims")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
-                    staffView === "claims" || staffView === "claim_requests" ? "bg-emerald-100 text-emerald-900" : "text-stone-600"
-                  }`}
-                >
-                  LGU Claims
-                </button>
-              </>
-            )}
-          </div>
-        )}
       </div>
+
+      {/* Logout Confirmation Modal - Constrained to app container */}
+      {showLogoutConfirm && (
+        <div className="absolute top-0 left-0 w-full h-[100dvh] z-[100] flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm animate-in fade-in duration-200" style={{ transform: "translateY(0)" }}>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[320px] p-6 overflow-hidden animate-in zoom-in-95 duration-200 border border-stone-100">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-5 ring-8 ring-red-50/50">
+                <LogOut className="w-7 h-7 ml-0.5" />
+              </div>
+              <h3 className="text-xl font-extrabold text-stone-900 mb-2">Sign Out?</h3>
+              <p className="text-sm text-stone-500 mb-6 leading-relaxed">
+                Are you sure you want to sign out of your account?
+              </p>
+              <div className="flex flex-col w-full space-y-2">
+                <button
+                  onClick={() => {
+                    setShowLogoutConfirm(false);
+                    logout();
+                  }}
+                  className="w-full py-3 px-4 rounded-xl bg-red-600 font-bold text-white hover:bg-red-700 transition-colors shadow-sm active:scale-[0.98]"
+                >
+                  Yes, Sign Out
+                </button>
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="w-full py-3 px-4 rounded-xl font-bold text-stone-600 hover:bg-stone-100 transition-colors active:scale-[0.98]"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

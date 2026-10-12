@@ -45,19 +45,19 @@ export const NotificationDrawer: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="absolute inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-stone-900/40 backdrop-blur-xs transition-opacity"
         onClick={() => setIsNotifDrawerOpen(false)}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
           {/* Header */}
           <div className="p-4 sm:p-6 border-b border-stone-200 bg-stone-50 flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center">
                 <Bell className="w-4 h-4" />
               </div>
               <div>
@@ -82,7 +82,7 @@ export const NotificationDrawer: React.FC = () => {
             </span>
             <button
               onClick={markAllNotificationsRead}
-              className="text-emerald-800 hover:text-emerald-950 font-bold flex items-center space-x-1"
+              className="text-blue-800 hover:text-blue-950 font-bold flex items-center space-x-1"
             >
               <CheckCheck className="w-3.5 h-3.5" />
               <span>Mark all as read</span>
@@ -103,7 +103,7 @@ export const NotificationDrawer: React.FC = () => {
                   onClick={() => handleNotificationClick(notif)}
                   className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
                     !notif.read
-                      ? "bg-emerald-50/50 border-emerald-200 hover:bg-emerald-50"
+                      ? "bg-blue-50/50 border-blue-200 hover:bg-blue-50"
                       : "bg-white border-stone-200/70 hover:bg-stone-50"
                   }`}
                 >
@@ -115,7 +115,7 @@ export const NotificationDrawer: React.FC = () => {
                         </div>
                       )}
                       {notif.type === "claim_update" && (
-                        <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                        <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center">
                           <Shield className="w-3.5 h-3.5" />
                         </div>
                       )}
@@ -144,8 +144,8 @@ export const NotificationDrawer: React.FC = () => {
                       </p>
                       {!notif.read && (
                         <div className="mt-2 flex items-center space-x-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-700"></span>
-                          <span className="text-[10px] font-bold text-emerald-800">Click to view details</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-700"></span>
+                          <span className="text-[10px] font-bold text-blue-800">Click to view details</span>
                         </div>
                       )}
                     </div>
